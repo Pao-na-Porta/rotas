@@ -58,6 +58,7 @@ function App() {
             <small>07:00</small>
             <span className="mdi mdi-bullseye-arrow" id="mudar_rota"></span>
             <span className="mdi mdi-alpha-s-circle-outline" id="mudar_rota"></span>
+            <span className="mdi mdi-eye-off-outline" id="mudar_rota"></span>
 
           </label>
         </div>
