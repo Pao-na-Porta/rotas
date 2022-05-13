@@ -111,6 +111,18 @@ h1 {
   margin-bottom: 5px;
 }
 
+.accordion-tab::before {
+  content: "\001C1";
+  color: white;
+  vertical-align: center;
+  text-shadow: 0px 0px 1px #FFFFFF;
+  position: relative;
+  top: -25px;
+  left: -15px;
+  transform: rotate(90deg);
+
+}
+
 .accordion label.acc-lbl {
   display: flex;
   justify-content: space-between;

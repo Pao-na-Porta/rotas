@@ -55,7 +55,10 @@ function App() {
           <label className="acc-lbl" htmlFor="check1">
             Rota 66
             <small>12 pedidos</small>
-            <small>Saída 07:00</small>
+            <small>07:00</small>
+            <span className="mdi mdi-bullseye-arrow" id="mudar_rota"></span>
+            <span className="mdi mdi-alpha-s-circle-outline" id="mudar_rota"></span>
+
           </label>
         </div>
         <div className="accordion-content">
