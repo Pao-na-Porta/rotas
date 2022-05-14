@@ -2,8 +2,9 @@ import React from "react";
 import axios from "axios";
 
 type DatasDeEntregaState = {datas:any, value:any}
+type DatasDeEntregaProps = {onChangeCallback?:any}
 
-export class DatasDeEntrega extends React.Component<any, DatasDeEntregaState> {
+export class DatasDeEntrega extends React.Component<DatasDeEntregaProps, DatasDeEntregaState> {
 
   constructor(props:any) {
     super(props)
@@ -17,6 +18,12 @@ export class DatasDeEntrega extends React.Component<any, DatasDeEntregaState> {
   }
 
   handleChange(event:any) {
+    this.setState({"value": event.target.value})
+
+    if (typeof this.props.onChangeCallback === 'function') {
+      this.props.onChangeCallback(event.target.value)
+    }
+
   }
 
   componentDidMount(): void {
@@ -52,9 +59,9 @@ export class DatasDeEntrega extends React.Component<any, DatasDeEntregaState> {
 
     return <div>
       <label>Datas de Entrega</label>
-      <select id="entregaAt" className="w-100">
+      <select id="entregaAt" className="w-100" onChange={this.handleChange}>
         <option>selecione uma semana</option>
-        {options.map((item:any) => {return <option value="${item.value.join(',')}">{item.label.join('-')}</option>})}
+        {options.map((item:any) => {return <option value={item.value.join(',')}>{item.label.join('-')}</option>})}
       </select>
     </div>
   }

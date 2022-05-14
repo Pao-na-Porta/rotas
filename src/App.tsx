@@ -1,4 +1,4 @@
-import React, {DOMElement, ReactElement, ReactNode} from 'react'
+import React, {Component, DOMElement, ReactElement, ReactNode} from 'react'
 import {LatLngExpression} from 'leaflet'
 import {MapContainer, Marker, Popup, TileLayer} from 'react-leaflet'
 import {useTheme} from '@material-ui/core/styles'
@@ -13,6 +13,8 @@ import {Rotas} from "./components/Rotas"
 import './App.css'
 
 function App() {
+
+  const [entregaAt, setEntregaAt] = React.useState(null)
 
   const positionA: LatLngExpression = [-30.032, -50.800]
   const positionB: LatLngExpression = [-30.032, -50.800]
@@ -44,8 +46,8 @@ function App() {
   ]
 
   const a = <div>
-    <DatasDeEntrega />
-    <Rotas />
+    <DatasDeEntrega onChangeCallback={(data:any) => setEntregaAt(entregaAt => data)} />
+    <Rotas entregaAt={entregaAt} />
   </div>;
 
   const b = <MapContainer className='main-container' center={[-30.032, -50.800]} zoom={10} maxZoom={18} scrollWheelZoom={true}>
