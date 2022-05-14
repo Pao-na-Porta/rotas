@@ -9,10 +9,10 @@ export class ResizablePanel extends React.Component<ResizablePanelProps, Resizab
   prevX: number;
 
   constructor(props:any) {
-    super(props);
-    this.leftPanel = document.createElement('div');
-    this.rightPanel = document.createElement('div');
-    this.prevX = 0;
+    super(props)
+    this.leftPanel = document.createElement('div')
+    this.rightPanel = document.createElement('div')
+    this.prevX = 0
 
     this.state = {leftContent: props.leftContent, rightContent: props.rightContent}
   }
@@ -40,12 +40,16 @@ export class ResizablePanel extends React.Component<ResizablePanelProps, Resizab
 
   render() {
     return <div className="resizable-pane-wrapper">
-      <div className="resizable-pane-pane resizable-pane-left" ref={(node: HTMLDivElement) => (this.leftPanel = node)}>
+      <div className="resizable-pane-pane resizable-pane-left"
+           ref={(node: HTMLDivElement) => (this.leftPanel = node)}>
         {this.state.leftContent}
       </div>
-      <div className="resizable-pane-pane resizable-pane-right" ref={(node: HTMLDivElement) => (this.rightPanel = node)}>
+      <div className="resizable-pane-pane resizable-pane-right"
+           ref={(node: HTMLDivElement) => (this.rightPanel = node)}>
         {this.state.rightContent}
-        <div className="resizable-pane-gutter" onMouseDown={this.handleEvent}></div>
+        <div className="resizable-pane-gutter"
+             onMouseDown={this.handleEvent}>
+        </div>
       </div>
     </div>
   }
