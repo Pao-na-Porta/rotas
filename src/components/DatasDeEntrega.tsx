@@ -60,8 +60,8 @@ export class DatasDeEntrega extends React.Component<DatasDeEntregaProps, DatasDe
     return <div>
       <label>Datas de Entrega</label>
       <select id="entregaAt" className="w-100" onChange={this.handleChange}>
-        <option>selecione uma semana</option>
-        {options.map((item:any) => {return <option value={item.value.join(',')}>{item.label.join('-')}</option>})}
+        <option key='1'>selecione uma semana</option>
+        {options.map((item:any, index:number) => {return <option value={item.value.join(',')} key={index}>{item.label.join('-')}</option>})}
       </select>
     </div>
   }
