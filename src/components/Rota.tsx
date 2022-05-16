@@ -7,7 +7,7 @@ export class Rota extends React.Component<RotaProps, RotaState> {
 
   constructor(props:any) {
     super(props)
-    this.setState(props.rota)
+    this.state = {rota: props.rota}
   }
 
   render() {
