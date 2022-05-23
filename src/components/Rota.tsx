@@ -1,106 +1,98 @@
-import React from "react"
+import React, {useState} from "react"
+import CheckIcon from "./CheckIcon"
+import RotaIcon from "./RotaIcon"
+import {SelectEntregador} from "./SelectEntregador"
 
-type RotaProps = { rota:any}
-type RotaState = { rota:any}
+interface RotaProps {
+  rota: any
+}
 
-export class Rota extends React.Component<RotaProps, RotaState> {
+export const Rota = ({rota}: RotaProps) => {
 
-  constructor(props:any) {
-    super(props)
-    this.state = {rota: props.rota}
-  }
+  const [contentOpened, setContentOpened] = useState(false)
 
-  render() {
-    return <div className="accordion">
-      <div className="accordion-tab">
-        <span className="mdi mdi-map-marker rota-label"></span>
-        <input type="checkbox" className="accordion-trigger" id="check1"   />
-        <label className="acc-lbl" htmlFor="check1">
-          Rota 66
+  return <div className="accordion" key={rota.id}>
+    <div className="accordion-tab">
+      <RotaIcon checked={false} bgcolor={rota.cor.background} color={rota.cor.text} numero={rota.numero}></RotaIcon>
+      <div style={{width: "100%"}}>
+        <div className="mb-5">{rota.nome}</div>
+        <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
           <small>12 pedidos</small>
-          <small>07:00</small>
-          <span className="mdi mdi-bullseye-arrow" id="mudar_rota"></span>
-          <span className="mdi mdi-alpha-s-circle-outline" id="mudar_rota"></span>
-          <span className="mdi mdi-eye-off-outline" id="mudar_rota"></span>
-
-        </label>
-      </div>
-      <div className="accordion-content">
-        <div className="tab-squared">
-          <div className="active" data-target="listao1">Listão</div>
-          <div data-target="end1">Endereço Final</div>
-          <div data-target="roteirizador1">Roteirizador</div>
+          <small>{rota.saida}</small>
+          <span style={{fontSize: "20px"}}>
+              <CheckIcon iconClass="mdi mdi-bullseye-arrow ml-5" checked={false}></CheckIcon>
+              <CheckIcon iconClass="mdi mdi-alpha-s-circle-outline ml-5" checked={false}></CheckIcon>
+              <CheckIcon iconClass="mdi mdi-eye-off-outline ml-5" checked={false}></CheckIcon>
+              <CheckIcon iconClass="mdi mdi-chevron-right ml-5 accordion-close"
+                         checked={false}
+                         checkedColor="white"
+                         checkedClassName="accordion-open"
+                         onChangeCallback={(opened:boolean) => {
+                           setContentOpened(opened)
+                         }}
+                         key={rota.id}></CheckIcon>
+            </span>
         </div>
-
-        <div id="listao1" className="tab-squared-content active">
-          <div className="form">
-            <div className="form-row">
-              <div className="form-field">
-                <label>Motorista</label>
-                <div className="form-input-prep">
-                  <span className="mdi mdi-account-tie-hat-outline"></span>
-                  <select>
-                    <option>Zé das galinhas</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="form-field">
-                <label>Entregador</label>
-                <div className="form-input-prep">
-                  <span className="mdi mdi-human-dolly"></span>
-                  <select>
-                    <option>Zé das galinhas</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-field">
-                <label>Suporte</label>
-                <div className="form-input-prep">
-                                <span
-                                  className="mdi mdi-account-heart-outline"></span>
-                  <select>
-                    <option>Zé das galinhas</option>
-                  </select>
-                </div>
-              </div>
-              <div className="form-field">
-                <label>Hora</label>
-                <div className="form-input-prep">
-                                            <span
-                                              className="mdi mdi-clock-check-outline"></span>
-                  <input type="text" />
-                </div>
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-field">
-                <label>Carro</label>
-                <div className="form-input-prep">
-                                            <span
-                                              className="mdi mdi-car"></span>
-                  <input type="text" />
-                </div>
-              </div>
-              <div className="form-field">
-                <label>Local</label>
-                <div className="form-input-prep">
-                                            <span
-                                              className="mdi mdi-earth"></span>
-                  <input type="text"/>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
       </div>
     </div>
-  }
+    <div className={"accordion-content" + (contentOpened ? ' accordion-content-opened' : '')}>
+      <div className="tab-squared">
+        <div className="active" data-target="listao1">Listão</div>
+        <div data-target="end1">Endereço Final</div>
+        <div data-target="roteirizador1">Roteirizador</div>
+      </div>
+
+      <div id="listao1" className="tab-squared-content active">
+        <div className="form">
+          <div className="form-row">
+            <SelectEntregador label="Motorista" id={rota.motorista_id}/>
+            <SelectEntregador label="Entregador" id={rota.entregador_id} prependClass="mdi mdi-human-dolly"/>
+          </div>
+
+          <div className="form-row">
+            <div className="form-field">
+              <label>Suporte</label>
+              <div className="form-input-prep">
+                                <span
+                                  className="mdi mdi-account-heart-outline"></span>
+                <select>
+                  <option>Zé das galinhas</option>
+                </select>
+              </div>
+            </div>
+            <div className="form-field">
+              <label>Hora</label>
+              <div className="form-input-prep">
+                                            <span
+                                              className="mdi mdi-clock-check-outline"></span>
+                <input type="text" value={rota.saida}/>
+              </div>
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-field">
+              <label>Carro</label>
+              <div className="form-input-prep">
+                                            <span
+                                              className="mdi mdi-car"></span>
+                <input type="text" value={rota.carro}/>
+              </div>
+            </div>
+            <div className="form-field">
+              <label>Local</label>
+              <div className="form-input-prep">
+                                            <span
+                                              className="mdi mdi-earth"></span>
+                <input type="text" value={rota.local}/>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
 
 }

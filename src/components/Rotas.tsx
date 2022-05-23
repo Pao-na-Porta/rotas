@@ -1,22 +1,18 @@
 import React from 'react'
+import {useRecoilState} from 'recoil'
 import {Rota} from './Rota'
+import {rotasState} from "../atoms/Rotas";
+import {height} from "@material-ui/system";
 
-type RotasProps = {rotas?:any, entregaAt?:any}
-type RotasState = {rotas:any, entregaAt?:any}
+export const Rotas = () => {
+  const [rotas, setRotas] = useRecoilState(rotasState)
 
-export class Rotas extends React.Component<RotasProps, RotasState> {
+  return <div className="scroll-bar">
+  <div className="tab-row m-5">
+    {rotas.map((rota) => {
+      return <Rota rota={rota}/>
+    })}
+  </div>
+  </div>
 
-  constructor(props:any) {
-    super(props)
-
-    this.state = {entregaAt: this.props.entregaAt, rotas: []}
-
-  }
-
-  render () {
-    return <div className="tab-row m-5">
-      <Rota rota={null} />
-    </div>
-
-  }
 }
