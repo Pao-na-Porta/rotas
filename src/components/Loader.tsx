@@ -12,9 +12,6 @@ export const Loader = () => {
   const [datasDeEntrega, setDatasDeEntrega] = useRecoilState(datasDeEntregaState)
   const [carregando, setCarregando] = useState(false)
 
-  const styleCarregando =  {
-    width: '10'
-  }
   if (!carregando) {
     setCarregando(true)
 
@@ -34,7 +31,6 @@ export const Loader = () => {
         .catch(error => console.log(error))
     }
 
-
     if (datasDeEntrega.length === 0) {
       axios.get('http://127.0.0.1:8000/mapa/v1/entregas-por-semana')
         .then((response) => {
@@ -42,6 +38,7 @@ export const Loader = () => {
         })
         .catch(error => console.log(error))
     }
+
     return <div className="app-loader">
       <div className="app-loader-wheel"></div>
       <div className="app-loader-text">Carregando...</div>
