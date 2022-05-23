@@ -17,7 +17,7 @@ export const Rota = ({rota}: RotaProps) => {
       <div style={{width: "100%"}}>
         <div className="mb-5">{rota.nome}</div>
         <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-          <small>12 pedidos</small>
+          <small>{rota.pedidos_count} pedido{rota.pedidos_count == 1 ? '' : 's'}</small>
           <small>{rota.saida}</small>
           <span style={{fontSize: "20px"}}>
               <CheckIcon iconClass="mdi mdi-bullseye-arrow ml-5" checked={false}></CheckIcon>

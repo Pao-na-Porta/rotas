@@ -22,7 +22,8 @@ export class RotaIcon extends React.Component<RotaIconProps, RotaIconState> {
       axios.get('http://127.0.0.1:8000/mapa/v1/entregas-por-semana')
         .then((response) => {
           wait(5000).then(
-            () => {this.setState(prevState => ({"loading": false}))}
+            () => {
+              this.setState(prevState => ({"loading": false}))}
           )
 
         })
@@ -38,31 +39,21 @@ export class RotaIcon extends React.Component<RotaIconProps, RotaIconState> {
 
   render() {
     let style = {
-      borderRadius: "50%",
-      padding: "5px",
-      border: "solid 3px",
-      marginRight: "8px",
       color: "white",
       backgroundColor: "black",
       borderColor: "white",
-      fontSize: "25px",
-      cursor: "pointer",
-      minWidth: "50px",
-      minHeight: "50px",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
     }
 
     // remove marcador... bota número
     // mdi mdi-map-marker
-    let cl = this.state.loading ? 'loader-background' : ''
+    let cl = this.state.loading ? 'rota-icon rota-icon-loading' : 'rota-icon '
 
     if (this.props.color) {
       style.color = this.props.color;
       style.backgroundColor = this.props.bgcolor;
     }
-    if (this.state.checked) {
+
+    if (this.state.checked && this.state.loading === false) {
       style.borderColor = "#7bf97b";
     }
 
