@@ -2,6 +2,7 @@ import React, {useState} from "react"
 import CheckIcon from "./CheckIcon"
 import RotaIcon from "./RotaIcon"
 import {SelectEntregador} from "./SelectEntregador"
+import {SelectSuporte} from "./SelectSuporte";
 
 interface RotaProps {
   rota: any
@@ -51,14 +52,7 @@ export const Rota = ({rota}: RotaProps) => {
 
           <div className="form-row">
             <div className="form-field">
-              <label>Suporte</label>
-              <div className="form-input-prep">
-                                <span
-                                  className="mdi mdi-account-heart-outline"></span>
-                <select>
-                  <option>Zé das galinhas</option>
-                </select>
-              </div>
+              <SelectSuporte label="Suporte" id={rota.suporte_id} prependClass="mdi-account-heart-outline"/>
             </div>
             <div className="form-field">
               <label>Hora</label>
