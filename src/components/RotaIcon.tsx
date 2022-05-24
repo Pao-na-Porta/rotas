@@ -1,64 +1,71 @@
-import React from "react"
-import {wait} from "@testing-library/user-event/dist/utils";
-import axios from "axios";
+import React, {useState} from "react"
+import axios from "axios"
+import {useRecoilState} from "recoil"
+import {pedidosState} from "../atoms/Pedidos"
 
-type RotaIconState = {checked:boolean, loading:boolean}
-type RotaIconProps = {checked:boolean, color:string, bgcolor:string, onChange?:any, numero?:any}
+interface RotaIconProps {
+  checked: boolean,
+  color: string,
+  bgcolor: string,
+  onChange?: any,
+  numero?: any,
+  id?: any
+}
 
-export class RotaIcon extends React.Component<RotaIconProps, RotaIconState> {
+export function RotaIcon({checked, color, bgcolor, onChange, numero, id}: RotaIconProps) {
+  const [pedidos, setPedidos] = useRecoilState(pedidosState)
+  const [isChecked, setIsChecked] = useState(checked)
+  const [loading, setLoading] = useState(false)
 
-  constructor(props:any) {
-    super(props);
-    this.state = {checked: typeof props.checked === 'undefined' ? false : props.checked, loading: false}
-    this.handleClick = this.handleClick.bind(this)
-  }
+  const handleClick = (event: any) => {
 
-  handleClick(event:any) {
-    console.log('clicked')
+    setLoading(true)
+    setIsChecked(!checked)
 
-    this.setState(prevState => ({"loading": true, "checked": !prevState.checked}))
-
-    if (!this.state.checked) {
-      axios.get('http://127.0.0.1:8000/mapa/v1/entregas-por-semana')
+    if (!isChecked) {
+      axios.get(`http://127.0.0.1:8000/mapa/v1/rota/${id}/pedidos`)
         .then((response) => {
-          wait(5000).then(
-            () => {
-              this.setState(prevState => ({"loading": false}))}
-          )
+
+          response.data.data.forEach((pedido:never) => {
+            setPedidos( (pedidos) => [
+              ...pedidos, pedido
+            ])
+
+          })
+
+          setLoading(false)
 
         })
         .catch(error => console.log(error))
 
     }
 
-    if (typeof this.props.onChange === 'function') {
-      this.props.onChange(event)
+    if (typeof onChange === 'function') {
+      onChange(event)
     }
 
   }
 
-  render() {
-    let style = {
-      color: "white",
-      backgroundColor: "black",
-      borderColor: "white",
-    }
-
-    // remove marcador... bota número
-    // mdi mdi-map-marker
-    let cl = this.state.loading ? 'rota-icon rota-icon-loading' : 'rota-icon '
-
-    if (this.props.color) {
-      style.color = this.props.color;
-      style.backgroundColor = this.props.bgcolor;
-    }
-
-    if (this.state.checked && this.state.loading === false) {
-      style.borderColor = "#7bf97b";
-    }
-
-    return <span className={cl} style={style} onClick={this.handleClick}>{this.props.numero}</span>
+  let style = {
+    color: "white",
+    backgroundColor: "black",
+    borderColor: "white",
   }
+
+  // remove marcador... bota número
+  // mdi mdi-map-marker
+  let cl = loading ? 'rota-icon rota-icon-loading' : 'rota-icon '
+
+  if (color) {
+    style.color = color;
+    style.backgroundColor = bgcolor;
+  }
+
+  if (isChecked && loading === false) {
+    style.borderColor = "#7bf97b";
+  }
+
+  return <span className={cl} style={style} onClick={handleClick}>{numero}</span>
 }
 
 export default RotaIcon

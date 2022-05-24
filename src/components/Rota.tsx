@@ -14,7 +14,7 @@ export const Rota = ({rota}: RotaProps) => {
 
   return <div className="accordion" key={rota.id}>
     <div className="accordion-tab">
-      <RotaIcon checked={false} bgcolor={rota.cor.background} color={rota.cor.text} numero={rota.numero}></RotaIcon>
+      <RotaIcon checked={false} bgcolor={rota.cor.background} color={rota.cor.text} numero={rota.numero} id={rota.id}></RotaIcon>
       <div style={{width: "100%"}}>
         <div className="mb-5">{rota.nome}</div>
         <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
@@ -39,11 +39,11 @@ export const Rota = ({rota}: RotaProps) => {
     <div className={"accordion-content" + (contentOpened ? ' accordion-content-opened' : '')}>
       <div className="tab-squared">
         <div className="active" data-target="listao1">Listão</div>
-        <div data-target="end1">Endereço Final</div>
-        <div data-target="roteirizador1">Roteirizador</div>
+        <div>Endereço Final</div>
+        <div>Roteirizador</div>
       </div>
 
-      <div id="listao1" className="tab-squared-content active">
+      <div className="tab-squared-content active">
         <div className="form">
           <div className="form-row">
             <SelectEntregador label="Motorista" id={rota.motorista_id}/>
@@ -57,9 +57,9 @@ export const Rota = ({rota}: RotaProps) => {
             <div className="form-field">
               <label>Hora</label>
               <div className="form-input-prep">
-                                            <span
-                                              className="mdi mdi-clock-check-outline"></span>
-                <input type="text" value={rota.saida}/>
+                <span
+                  className="mdi mdi-clock-check-outline"></span>
+                <input type="text" value={rota.saida} onChange={(e) => {rota.saida = e.target.value}}/>
               </div>
             </div>
           </div>
@@ -68,17 +68,17 @@ export const Rota = ({rota}: RotaProps) => {
             <div className="form-field">
               <label>Carro</label>
               <div className="form-input-prep">
-                                            <span
-                                              className="mdi mdi-car"></span>
-                <input type="text" value={rota.carro}/>
+                <span
+                  className="mdi mdi-car"></span>
+                <input type="text" value={rota.carro} onChange={(e) => {rota.carro = e.target.value}}/>
               </div>
             </div>
             <div className="form-field">
               <label>Local</label>
               <div className="form-input-prep">
-                                            <span
-                                              className="mdi mdi-earth"></span>
-                <input type="text" value={rota.local}/>
+                <span
+                  className="mdi mdi-earth"></span>
+                <input type="text" value={rota.local} onChange={(e) => {rota.local = e.target.value}}/>
               </div>
             </div>
           </div>
