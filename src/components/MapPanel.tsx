@@ -1,3 +1,5 @@
+// https://stackoverflow.com/questions/42835692/react-leaflet-add-markers-dynamically
+
 import React from 'react'
 import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
 import {DivIcon, Icon} from "leaflet";
@@ -36,6 +38,20 @@ export const MapPanel = () =>  {
     iconSize: [25, 25]
   });
 
+  const fakePedidos =  [
+    {
+      id: 1,
+      latitude: -30.036,
+      longitude: -50.803,
+      cliente: {nome: "Zé"}
+    },    {
+      id: 2,
+      latitude: -30.038,
+      longitude: -50.806,
+      cliente: {nome: "JOao"}
+    },
+  ]
+
   return <MapContainer className='main-container'
                 center={[-30.032, -50.800]}
                 zoom={10}
@@ -62,7 +78,7 @@ export const MapPanel = () =>  {
           iconSize: [25, 25]
         });
 
-        return <Marker key={pedido.id} position={[parseFloat(pedido.latitude), parseFloat(pedido.longitude)]} icon={marker}>
+        return <Marker key={'marker' + pedido.id.toString()} position={[parseFloat(pedido.latitude), parseFloat(pedido.longitude)]} icon={marker}>
           <Popup>
             essa {pedido.cliente.nome}
           </Popup>
