@@ -1,10 +1,11 @@
 import React, {useState} from "react"
 import axios from "axios"
-import {useRecoilState} from "recoil"
+import {useSetRecoilState} from "recoil"
 import {pedidosState} from "../atoms/Pedidos"
 
 interface RotaIconProps {
   checked: boolean,
+  loading: boolean,
   color: string,
   bgcolor: string,
   onChange?: any,
@@ -12,36 +13,14 @@ interface RotaIconProps {
   id?: any
 }
 
-export function RotaIcon({checked, color, bgcolor, onChange, numero, id}: RotaIconProps) {
-  const [pedidos, setPedidos] = useRecoilState(pedidosState)
+export function RotaIcon({loading, checked, color, bgcolor, onChange, numero, id}: RotaIconProps) {
   const [isChecked, setIsChecked] = useState(checked)
-  const [loading, setLoading] = useState(false)
 
   const handleClick = (event: any) => {
 
-    setLoading(true)
-    setIsChecked(!checked)
-
-    if (!isChecked) {
-      axios.get(`http://127.0.0.1:8000/mapa/v1/rota/${id}/pedidos`)
-        .then((response) => {
-
-          response.data.data.forEach((pedido:never) => {
-            setPedidos( (pedidos) => [
-              ...pedidos, pedido
-            ])
-
-          })
-
-          setLoading(false)
-
-        })
-        .catch(error => console.log(error))
-
-    }
-
+    setIsChecked(!isChecked)
     if (typeof onChange === 'function') {
-      onChange(event)
+      onChange(!isChecked)
     }
 
   }

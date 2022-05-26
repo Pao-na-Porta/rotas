@@ -3,7 +3,7 @@ import axios from "axios"
 import {useRecoilState} from "recoil";
 import { datasDeEntregaState } from "../atoms/DatasDeEntrega";
 import { dataDeEntregaState } from "../atoms/DataDeEntrega";
-import {rotasState} from "../atoms/Rotas";
+import {rotasColorSelector, rotasState} from "../atoms/Rotas";
 
 interface DatasDeEntregaProps {
   onChangeCallback?:any
@@ -14,6 +14,7 @@ export const DatasDeEntrega = (props:DatasDeEntregaProps) => {
   const [datasDeEntrega, setDatasDeEntrega] = useRecoilState(datasDeEntregaState)
   const [dataDeEntrega, setDataDeEntrega] = useRecoilState(dataDeEntregaState)
   const [rotas, setRotas] = useRecoilState(rotasState)
+  const [rotaCor, setRotasCor] = useRecoilState(rotasColorSelector)
 
   const onChange = (event: any) => {
     setDataDeEntrega(event.target.value);
@@ -30,6 +31,9 @@ export const DatasDeEntrega = (props:DatasDeEntregaProps) => {
         .then((response) => {
           console.log(`Total rotas carregadas: ${response.data.data.length}`)
           setRotas(response.data.data)
+          response.data.data.forEach( (rota:any) => {
+            setRotasCor(rota)
+          })
         })
         .catch(error => console.log(error))
     }

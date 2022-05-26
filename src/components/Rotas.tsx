@@ -9,8 +9,9 @@ export const Rotas = () => {
 
   return <div className="scroll-bar">
   <div className="tab-row m-5">
-    {rotas.map((rota) => {
-      return <Rota rota={rota}/>
+    {rotas.map((rota:any) => {
+      const key = `rotaComponent${rota.id}`
+      return <Rota rota={rota} key={key}/>
     })}
   </div>
   </div>

@@ -3,6 +3,10 @@ import CheckIcon from "./CheckIcon"
 import RotaIcon from "./RotaIcon"
 import {SelectEntregador} from "./SelectEntregador"
 import {SelectSuporte} from "./SelectSuporte";
+import axios from "axios";
+import {useRecoilState, useSetRecoilState} from "recoil";
+import {pedidosSelector} from "../atoms/Pedidos";
+import {marcadoresSelector} from "../atoms/Marcadores";
 
 interface RotaProps {
   rota: any
@@ -11,10 +15,32 @@ interface RotaProps {
 export const Rota = ({rota}: RotaProps) => {
 
   const [contentOpened, setContentOpened] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [pedidos, setPedidosSelector] = useRecoilState(pedidosSelector)
+  const [marcadores, setMarcadoresSelector] = useRecoilState(marcadoresSelector)
+
+  const handleChange = () => {
+    setLoading(true)
+
+    axios.get(`http://127.0.0.1:8000/mapa/v1/rota/${rota.id}/pedidos`)
+      .then((response) => {
+
+        console.log('Pedidos carregados: ' + response.data.data.length)
+
+        response.data.data.forEach((pedido: any) => {
+          setPedidosSelector(pedido)
+          setMarcadoresSelector(pedido)
+        })
+
+        setLoading(false)
+
+      })
+      .catch(error => console.log(error))
+  }
 
   return <div className="accordion" key={rota.id}>
     <div className="accordion-tab">
-      <RotaIcon checked={false} bgcolor={rota.cor.background} color={rota.cor.text} numero={rota.numero} id={rota.id}></RotaIcon>
+      <RotaIcon loading={loading} checked={false} bgcolor={rota.cor.background} color={rota.cor.text} numero={rota.numero} id={rota.id} onChange={handleChange}></RotaIcon>
       <div style={{width: "100%"}}>
         <div className="mb-5">{rota.nome}</div>
         <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
