@@ -1,7 +1,4 @@
 import React, {useState} from "react"
-import axios from "axios"
-import {useSetRecoilState} from "recoil"
-import {pedidosState} from "../atoms/Pedidos"
 
 interface RotaIconProps {
   checked: boolean,
