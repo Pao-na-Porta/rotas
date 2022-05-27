@@ -1,5 +1,5 @@
 import React from "react"
-import { useRecoilState } from "recoil"
+import {useRecoilValue} from "recoil"
 import {suporteState} from "../atoms/Suporte";
 
 interface SelectSuporteProps {
@@ -10,7 +10,7 @@ interface SelectSuporteProps {
 }
 
 export function SelectSuporte({label, id, prependClass, onChange}: SelectSuporteProps) {
-    const [suportes, setSuportes] = useRecoilState<any>(suporteState)
+    const suportes = useRecoilValue(suporteState)
 
     const handleChange = (e:any) => {
         if (typeof onChange === 'function') {

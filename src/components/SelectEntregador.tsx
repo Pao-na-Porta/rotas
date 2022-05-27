@@ -1,5 +1,5 @@
 import React from "react"
-import { useRecoilState } from "recoil"
+import {useRecoilValue} from "recoil"
 import {entregadorState} from "../atoms/Entregadores"
 
 interface SelectEntregadorProps {
@@ -10,7 +10,7 @@ interface SelectEntregadorProps {
 }
 
 export function SelectEntregador({label, id, prependClass, onChange}: SelectEntregadorProps) {
-    const [entregadores, setEntregadores] = useRecoilState<any>(entregadorState)
+    const entregadores = useRecoilValue(entregadorState)
 
     const handleChange = (e:any) => {
         if (typeof onChange === 'function') {

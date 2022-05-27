@@ -1,30 +1,32 @@
 import React, {useState} from 'react'
+import {MarkerPopupContent} from "./MarkerPopupContent";
 
 interface MarkerPopupInterface {
   marcador: any
 }
 
-export const MarkerPopup = ({marcador}:MarkerPopupInterface) => {
-  const [pedidoSelecionado, setPedidoSelecionado] = useState(marcador.pedidos[0].id);
-  let ativo = ''
+export const MarkerPopup = ({marcador}: MarkerPopupInterface) => {
+  const [pedidoSelecionado, setPedidoSelecionado] = useState(marcador.pedidos[0]);
 
   return <div className="popup">
     <ul className="popup-tab-header">
-      {marcador.pedidos.map((pedido:any) => {
-        ativo = (pedidoSelecionado == pedido.id ? 'ativo' : '')
-        return <li key={`popup-${marcador.id}-${pedido.id}`}><a href="#" className={ativo} onClick={() => {setPedidoSelecionado(pedido.id)}}>{pedido.id}</a></li>
+      {marcador.pedidos.map((id: any) => {
+
+        return <li key={`popup-${marcador.id}-${id}`}>
+          <a href="#"
+             className={(pedidoSelecionado === id ? 'ativo' : '')}
+             onClick={() => {
+               setPedidoSelecionado(id)
+             }}>{id}
+          </a>
+        </li>
       })}
     </ul>
-    {marcador.pedidos.map((pedido:any) => {
-      ativo = (pedidoSelecionado == pedido.id ? 'popup-content-ativo' : '')
-      return <div key={`content-${marcador.id}-${pedido.id}`} className={"popup-content " + ativo}>
-        <p>
-          {pedido.cliente.nome}<br/>
-          {pedido.endereco}, {pedido.numero}, {pedido.complemento}<br/>
-          {pedido.bairro}, {pedido.cidade}, {pedido.estado}<br/>
-
-        </p>
-      </div>
+    {marcador.pedidos.map((id: any) => {
+      return <MarkerPopupContent
+        marcadorId={marcador.id}
+        pedidoId={id}
+        ativo={(pedidoSelecionado === id)}/>
     })}
   </div>
 

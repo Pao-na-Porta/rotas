@@ -1,11 +1,10 @@
 import React from 'react'
-import {useRecoilState} from 'recoil'
+import {useRecoilValue} from 'recoil'
 import {Rota} from './Rota'
 import {rotasState} from "../atoms/Rotas";
-import {height} from "@material-ui/system";
 
 export const Rotas = () => {
-  const [rotas, setRotas] = useRecoilState(rotasState)
+  const rotas = useRecoilValue(rotasState)
 
   return <div className="scroll-bar">
   <div className="tab-row m-5">

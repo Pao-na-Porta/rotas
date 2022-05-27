@@ -1,4 +1,4 @@
-import {atom, selector, useRecoilState} from 'recoil'
+import {atom, atomFamily, selector} from 'recoil'
 
 export const marcadoresState = atom({
   key: 'marcadoresState',
@@ -16,6 +16,15 @@ const makeKey = (pedido) => {
       .replace('.', '-')
 }
 
+export const marcadoresFamily = atomFamily({
+  key: 'marcadoresFamily',
+  default: {}
+})
+
+/**
+ * OPTIMIZE
+ * @type {RecoilState<function(...[*]=)>}
+ */
 export const marcadoresSelector = selector({
   key: 'marcadoresSelector',
   get: (pedido) =>  ({get}) => {
@@ -34,8 +43,6 @@ export const marcadoresSelector = selector({
     const marcadorId = makeKey(pedido)
     const index = get(marcadoresIndexState)[marcadorId]
     let marcadores = get(marcadoresState)
-
-    console.log(`marcador id ${marcadorId} é ${index}`)
 
     if (typeof index == 'undefined') {
       const newlist = [...marcadores,

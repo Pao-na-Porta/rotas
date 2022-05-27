@@ -1,15 +1,10 @@
 import React from 'react'
-import {useTheme} from '@material-ui/core/styles'
 import {RecoilRoot} from 'recoil';
 import {Loader} from "./components/Loader";
 import {MainWindow} from './components/MainWindow'
 import './App.css'
 
 function App() {
-
-  const theme = useTheme()
-
-  const myPersonalThing = () => { return <div>Hello world! </div>}
 
   return (
     <RecoilRoot>

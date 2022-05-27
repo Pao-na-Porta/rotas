@@ -1,9 +1,9 @@
 import React from "react"
 import axios from "axios"
-import {useRecoilState} from "recoil";
+import {useRecoilValue, useSetRecoilState} from "recoil";
 import { datasDeEntregaState } from "../atoms/DatasDeEntrega";
 import { dataDeEntregaState } from "../atoms/DataDeEntrega";
-import {rotasColorSelector, rotasState} from "../atoms/Rotas";
+import {rotasState} from "../atoms/Rotas";
 
 interface DatasDeEntregaProps {
   onChangeCallback?:any
@@ -11,10 +11,9 @@ interface DatasDeEntregaProps {
 
 export const DatasDeEntrega = (props:DatasDeEntregaProps) => {
 
-  const [datasDeEntrega, setDatasDeEntrega] = useRecoilState(datasDeEntregaState)
-  const [dataDeEntrega, setDataDeEntrega] = useRecoilState(dataDeEntregaState)
-  const [rotas, setRotas] = useRecoilState(rotasState)
-  const [rotaCor, setRotasCor] = useRecoilState(rotasColorSelector)
+  const datasDeEntrega = useRecoilValue(datasDeEntregaState)
+  const setDataDeEntrega = useSetRecoilState(dataDeEntregaState)
+  const setRotas = useSetRecoilState(rotasState)
 
   const onChange = (event: any) => {
     setDataDeEntrega(event.target.value);
@@ -31,9 +30,6 @@ export const DatasDeEntrega = (props:DatasDeEntregaProps) => {
         .then((response) => {
           console.log(`Total rotas carregadas: ${response.data.data.length}`)
           setRotas(response.data.data)
-          response.data.data.forEach( (rota:any) => {
-            setRotasCor(rota)
-          })
         })
         .catch(error => console.log(error))
     }
@@ -53,6 +49,7 @@ export const DatasDeEntrega = (props:DatasDeEntregaProps) => {
 
         value.push(entrega.split(' ')[0]);
         label.push(`${("0" + d.getDate()).slice(-2)}/${("0" + d.getMonth()).slice(-2)}`);
+        return null
       })
 
       options.push({"value": value, "label": label})

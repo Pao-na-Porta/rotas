@@ -4,47 +4,42 @@ import RotaIcon from "./RotaIcon"
 import {SelectEntregador} from "./SelectEntregador"
 import {SelectSuporte} from "./SelectSuporte";
 import axios from "axios";
-import {useRecoilState, useSetRecoilState} from "recoil";
-import {pedidosSelector} from "../atoms/Pedidos";
-import {marcadoresSelector} from "../atoms/Marcadores";
+import {useSetRecoilState,} from "recoil";
+import {ListaRotaPedidos} from "./ListaRotaPedidos";
+import {rotasFamily} from "../atoms/Rotas";
 
 interface RotaProps {
   rota: any
 }
 
 export const Rota = ({rota}: RotaProps) => {
-
+  const [pedidosRota, setPedidosRota] = useState([])
   const [contentOpened, setContentOpened] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [pedidos, setPedidosSelector] = useRecoilState(pedidosSelector)
-  const [marcadores, setMarcadoresSelector] = useRecoilState(marcadoresSelector)
+  const [tabVisible, setTabVisible] = useState(0)
+  const setRotaFamily = useSetRecoilState(rotasFamily(rota.id))
+
+  setRotaFamily(rota)
 
   const handleChange = () => {
     setLoading(true)
 
     axios.get(`http://127.0.0.1:8000/mapa/v1/rota/${rota.id}/pedidos`)
       .then((response) => {
-
-        console.log('Pedidos carregados: ' + response.data.data.length)
-
-        response.data.data.forEach((pedido: any) => {
-          setPedidosSelector(pedido)
-          setMarcadoresSelector(pedido)
-        })
-
+        console.log(`Pedidos carregados: ${response.data.data.length} na rota #${rota.id} - ${rota.numero} = ${rota.nome}`)
+        setPedidosRota(response.data.data)
         setLoading(false)
-
       })
       .catch(error => console.log(error))
   }
 
-  return <div className="accordion" key={rota.id}>
+  return <div className="accordion" key={`acordionRota-${rota.id}`}>
     <div className="accordion-tab">
       <RotaIcon loading={loading} checked={false} bgcolor={rota.cor.background} color={rota.cor.text} numero={rota.numero} id={rota.id} onChange={handleChange}></RotaIcon>
       <div style={{width: "100%"}}>
         <div className="mb-5">{rota.nome}</div>
         <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-          <small>{rota.pedidos_count} pedido{rota.pedidos_count == 1 ? '' : 's'}</small>
+          <small>{rota.pedidos_count} pedido{rota.pedidos_count === 1 ? '' : 's'}</small>
           <small>{rota.saida}</small>
           <span style={{fontSize: "20px"}}>
               <CheckIcon iconClass="mdi mdi-bullseye-arrow ml-5" checked={false}></CheckIcon>
@@ -64,18 +59,18 @@ export const Rota = ({rota}: RotaProps) => {
     </div>
     <div className={"accordion-content" + (contentOpened ? ' accordion-content-opened' : '')}>
       <div className="tab-squared">
-        <div className="active" data-target="listao1">Listão</div>
+        <div className={(tabVisible === 0 ? 'active' : '')} onClick={(e)=> {setTabVisible(0)}}>Listão</div>
         <div>Endereço Final</div>
         <div>Roteirizador</div>
+        <div className={(tabVisible === 3 ? 'active' : '')} onClick={(e)=> {setTabVisible(3)}}>Sequencia</div>
       </div>
 
-      <div className="tab-squared-content active">
+      <div className={"tab-squared-content " + (tabVisible === 0 ? 'active' : '')}>
         <div className="form">
           <div className="form-row">
             <SelectEntregador label="Motorista" id={rota.motorista_id}/>
             <SelectEntregador label="Entregador" id={rota.entregador_id} prependClass="mdi mdi-human-dolly"/>
           </div>
-
           <div className="form-row">
             <div className="form-field">
               <SelectSuporte label="Suporte" id={rota.suporte_id} prependClass="mdi-account-heart-outline"/>
@@ -110,6 +105,10 @@ export const Rota = ({rota}: RotaProps) => {
           </div>
 
         </div>
+      </div>
+
+      <div className={"tab-squared-content " + (tabVisible === 3 ? 'active' : '')}>
+        <ListaRotaPedidos pedidos={pedidosRota} />
       </div>
 
     </div>
