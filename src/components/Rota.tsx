@@ -8,12 +8,14 @@ import {useRecoilState, useRecoilValue, useSetRecoilState,} from "recoil";
 import {ListaRotaPedidos} from "./ListaRotaPedidos";
 import {rotasFamily, rotaToLoad, rotasToLoad} from "../atoms/Rotas";
 import {loadRota} from "../helpers/Requests";
+import {pedidosUnloadState} from "../atoms/Pedidos";
 
 interface RotaProps {
   rota: any
 }
 
 export const Rota = ({rota}: RotaProps) => {
+  const setPedidosUnload = useSetRecoilState(pedidosUnloadState)
   const [pedidosRota, setPedidosRota] = useState([])
   const [contentOpened, setContentOpened] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -30,6 +32,13 @@ export const Rota = ({rota}: RotaProps) => {
   const handleChange = () => {
     setLoad(false)
     setLoading(true)
+
+    // pedidos estão carregados
+    if (pedidosRota.length) {
+      setPedidosUnload(pedidosRota)
+      setPedidosRota([])
+    }
+
     loadRota(rota.id, (response:any) => {
       console.log(`Pedidos carregados: ${response.data.data.length} na rota #${rota.id} - ${rota.numero} = ${rota.nome}`)
       setPedidosRota(response.data.data)
@@ -52,7 +61,7 @@ export const Rota = ({rota}: RotaProps) => {
     <div className="accordion-tab">
       <RotaIcon
         loading={loading}
-        checked={pedidosRota.length != 0}
+        checked={pedidosRota.length > 0}
         bgcolor={rota.cor.background}
         color={rota.cor.text}
         numero={rota.numero}

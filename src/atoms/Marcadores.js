@@ -1,6 +1,6 @@
 import {atom, atomFamily, selector} from 'recoil'
 
-const makeKey = (pedido) => {
+export const makeKey = (pedido) => {
   return `pos-${pedido.latitude.toFixed(4)}${pedido.longitude.toFixed(4)}`
       .replace('.', '-')
       .replace('.', '-')
@@ -33,7 +33,8 @@ export const marcadoresSelector = selector({
       id: marcadorId,
       pedidos: [pedido.id],
       latitude: pedido.latitude,
-      longitude: pedido.longitude
+      longitude: pedido.longitude,
+      atualizado: 0
     }
 
     if (typeof marcador.pedidos != 'undefined') {
@@ -42,7 +43,8 @@ export const marcadoresSelector = selector({
           id: marcadorId,
           pedidos: [...marcador.pedidos, pedido.id],
           latitude: marcador.latitude,
-          longitude: marcador.longitude
+          longitude: marcador.longitude,
+          atualizado: 0
         }
       }
     } else {
