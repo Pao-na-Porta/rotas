@@ -35,12 +35,13 @@ export const Rota = ({rota}: RotaProps) => {
 
     // pedidos estão carregados
     if (pedidosRota.length) {
+      console.log(`Descarregando ${pedidosRota.length} pedidos na rota #${rota.id} - ${rota.nome}`)
       setPedidosUnload(pedidosRota)
       setPedidosRota([])
     }
 
     loadRota(rota.id, (response:any) => {
-      console.log(`Pedidos carregados: ${response.data.data.length} na rota #${rota.id} - ${rota.numero} = ${rota.nome}`)
+      console.log(`Pedidos carregados: ${response.data.data.length} na rota #${rota.id} - ${rota.nome}`)
       setPedidosRota(response.data.data)
       setLoading(false)
       if (rotasACarregar.length) {
