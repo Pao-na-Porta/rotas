@@ -1,12 +1,13 @@
-import React, {useState} from "react"
+import React, {useEffect, useState} from "react"
 import CheckIcon from "./CheckIcon"
 import RotaIcon from "./RotaIcon"
 import {SelectEntregador} from "./SelectEntregador"
 import {SelectSuporte} from "./SelectSuporte";
 import axios from "axios";
-import {useSetRecoilState,} from "recoil";
+import {useRecoilState, useRecoilValue, useSetRecoilState,} from "recoil";
 import {ListaRotaPedidos} from "./ListaRotaPedidos";
-import {rotasFamily} from "../atoms/Rotas";
+import {rotasFamily, rotaToLoad, rotasToLoad} from "../atoms/Rotas";
+import {loadRota} from "../helpers/Requests";
 
 interface RotaProps {
   rota: any
@@ -18,24 +19,45 @@ export const Rota = ({rota}: RotaProps) => {
   const [loading, setLoading] = useState(false)
   const [tabVisible, setTabVisible] = useState(0)
   const setRotaFamily = useSetRecoilState(rotasFamily(rota.id))
+  const [load, setLoad] = useRecoilState(rotaToLoad(rota.id))
+  const [rotasACarregar, setRotasACarregar] = useRecoilState(rotasToLoad)
 
-  setRotaFamily(rota)
+  useEffect(() => {
+    setRotaFamily(rota)
+  }, [rota])
+
 
   const handleChange = () => {
+    setLoad(false)
     setLoading(true)
+    loadRota(rota.id, (response:any) => {
+      console.log(`Pedidos carregados: ${response.data.data.length} na rota #${rota.id} - ${rota.numero} = ${rota.nome}`)
+      setPedidosRota(response.data.data)
+      setLoading(false)
+      if (rotasACarregar.length) {
+        const newList = [] as never[]
+        for (let i=1; i<rotasACarregar.length; i++) {
+          newList.push(rotasACarregar[i])
+        }
+        setRotasACarregar(newList)
+      }
+    })
+  }
 
-    axios.get(`http://127.0.0.1:8000/mapa/v1/rota/${rota.id}/pedidos`)
-      .then((response) => {
-        console.log(`Pedidos carregados: ${response.data.data.length} na rota #${rota.id} - ${rota.numero} = ${rota.nome}`)
-        setPedidosRota(response.data.data)
-        setLoading(false)
-      })
-      .catch(error => console.log(error))
+  if (load) {
+    handleChange()
   }
 
   return <div className="accordion" key={`acordionRota-${rota.id}`}>
     <div className="accordion-tab">
-      <RotaIcon loading={loading} checked={false} bgcolor={rota.cor.background} color={rota.cor.text} numero={rota.numero} id={rota.id} onChange={handleChange}></RotaIcon>
+      <RotaIcon
+        loading={loading}
+        checked={pedidosRota.length != 0}
+        bgcolor={rota.cor.background}
+        color={rota.cor.text}
+        numero={rota.numero}
+        id={rota.id}
+        onChange={handleChange}></RotaIcon>
       <div style={{width: "100%"}}>
         <div className="mb-5">{rota.nome}</div>
         <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>

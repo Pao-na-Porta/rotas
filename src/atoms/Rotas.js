@@ -10,3 +10,18 @@ export const rotasFamily = atomFamily({
       default: {}
   }
 )
+
+export const rotaToLoad = atomFamily({
+    key: 'rotaToLoad',
+    default: false
+})
+
+export const rotasToLoad = atom({
+  key: 'rotasToLoad',
+  default: []
+})
+
+export const rotasPedidos =  atomFamily({
+    key: 'rotasPedidos',
+    default: []
+})

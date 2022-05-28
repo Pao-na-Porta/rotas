@@ -24,11 +24,9 @@ export const MapPanel = () =>  {
       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       url='https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZ3VzdGF2by1qYW50c2NoIiwiYSI6ImNrbWV5dDczYTB3YW8yeW14OHBncTJ1OGwifQ.Q7RrB_5akhYzcqQ62cncUg'
     />
-    {
-      marcadores.map((marcador:any) => {
-        return <MarkerCustom marcador={marcador} />
-      })
-    }
+    {marcadores.map((id:any) => {
+        return <MarkerCustom marcadorId={id} key={'MarkerCustom-' + id}/>
+    })}
   </MapContainer>
 
 }

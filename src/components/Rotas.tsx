@@ -1,10 +1,12 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {useRecoilValue} from 'recoil'
 import {Rota} from './Rota'
 import {rotasState} from "../atoms/Rotas";
 
 export const Rotas = () => {
   const rotas = useRecoilValue(rotasState)
+  const [rotasSolo, setRotaSolo] = useState([])
+  const [rotasVisiveis, setRotaVisiveis] = useState([])
 
   return <div className="scroll-bar">
   <div className="tab-row m-5">

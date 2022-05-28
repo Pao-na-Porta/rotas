@@ -14,6 +14,7 @@ export const MarkerPopupContent= ({pedidoId, marcadorId, ativo}: MarkerPopupCont
 
       return <div key={`content-${marcadorId}-${pedidoId}`} className={"popup-content " + (ativo ? 'popup-content-ativo' : '')}>
         <p>
+          Sequencia: {pedido.rota_sequencia}<br/>
           {pedido.cliente.nome}<br/>
           {pedido.endereco}, {pedido.numero}, {pedido.complemento}<br/>
           {pedido.bairro}, {pedido.cidade}, {pedido.estado}<br/>

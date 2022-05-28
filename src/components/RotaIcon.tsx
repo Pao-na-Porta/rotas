@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, {useEffect, useState} from "react"
 
 interface RotaIconProps {
   checked: boolean,
@@ -21,6 +21,10 @@ export function RotaIcon({loading, checked, color, bgcolor, onChange, numero, id
     }
 
   }
+
+  useEffect(() => {
+    setIsChecked(checked)
+  }, [checked])
 
   let style = {
     color: "white",

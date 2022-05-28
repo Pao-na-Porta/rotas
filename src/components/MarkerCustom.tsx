@@ -5,10 +5,7 @@ import {DivIcon} from "leaflet";
 import {Marker, Popup} from "react-leaflet";
 import {MarkerPopup} from "./MarkerPopup";
 import {rotasFamily} from "../atoms/Rotas";
-
-interface Interface {
-  marcador: any
-}
+import {marcadoresFamily} from "../atoms/Marcadores";
 
 const getCustomIcon = (marcador:any, color: string, pedido: any) => {
 
@@ -137,34 +134,26 @@ const getCustomIcon = (marcador:any, color: string, pedido: any) => {
 
 }
 
+interface Interface {
+  marcadorId: any
+}
 
-export const MarkerCustom = ({marcador}:Interface) => {
+export const MarkerCustom = ({marcadorId}:Interface) => {
 
-  const primeiroPedido = useRecoilValue(pedidosFamily(marcador.pedidos[0])) as any
+  const marcadorSalvo = useRecoilValue(marcadoresFamily(marcadorId)) as any
+  const primeiroPedido = useRecoilValue(pedidosFamily(marcadorSalvo.pedidos[0])) as any
   let rota = useRecoilValue(rotasFamily(primeiroPedido.rota_id)) as any
 
-  if (typeof rota === 'undefined') {
-    console.log('rota undefined')
-    console.log(primeiroPedido)
-  }
-
-  if (typeof rota.cor === 'undefined') {
-    console.log('rota undefined')
-    console.log(primeiroPedido)
-    console.log(rota)
-    console.log(marcador)
-    return <div></div>
-  }
-
   const marker = new DivIcon({
-    html: getCustomIcon(marcador, rota.cor.background, primeiroPedido),
+    html: getCustomIcon(marcadorSalvo, rota.cor.background, primeiroPedido),
     className: 'marker-custom-transparent',
     iconSize: [50, 50]
   });
 
-  return <Marker key={'marker' + marcador.id.toString()} position={[parseFloat(marcador.latitude), parseFloat(marcador.longitude)]} icon={marker}>
-    <Popup>
-      <MarkerPopup marcador={marcador}/>
+
+  return <Marker key={'MarkerCustomMarker' + primeiroPedido.id} position={[parseFloat(marcadorSalvo.latitude), parseFloat(marcadorSalvo.longitude)]} icon={marker}>
+    <Popup key={'MarkerPopupOnMarkerPopup' + marcadorSalvo.id + primeiroPedido.id}>
+      <MarkerPopup marcador={marcadorSalvo} key={'MarkerPopupOnMarker' + marcadorSalvo.id + primeiroPedido.id}/>
     </Popup>
   </Marker>
 
