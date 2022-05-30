@@ -2,13 +2,18 @@ import React, {useEffect, useState} from "react"
 import CheckIcon from "./CheckIcon"
 import RotaIcon from "./RotaIcon"
 import {SelectEntregador} from "./SelectEntregador"
-import {SelectSuporte} from "./SelectSuporte";
-import axios from "axios";
-import {useRecoilState, useRecoilValue, useSetRecoilState,} from "recoil";
-import {ListaRotaPedidos} from "./ListaRotaPedidos";
-import {rotasFamily, rotaToLoad, rotasToLoad} from "../atoms/Rotas";
-import {loadRota} from "../helpers/Requests";
-import {pedidosUnloadState} from "../atoms/Pedidos";
+import {SelectSuporte} from "./SelectSuporte"
+import {
+  useRecoilRefresher_UNSTABLE,
+  useRecoilState,
+  useRecoilTransaction_UNSTABLE,
+  useSetRecoilState,
+} from "recoil"
+import {ListaRotaPedidos} from "./ListaRotaPedidos"
+import {rotasFamily, rotaToLoad, rotasToLoad} from "../atoms/Rotas"
+import {loadRota} from "../helpers/Requests"
+import {pedidosFamily, pedidosUnloadState, pedidosVisibilitySelector} from "../atoms/Pedidos"
+import {makeKey, marcadoresFamily, marcadorVisibilitySelector, marcadoresState} from "../atoms/Marcadores"
 
 interface RotaProps {
   rota: any
@@ -23,11 +28,86 @@ export const Rota = ({rota}: RotaProps) => {
   const setRotaFamily = useSetRecoilState(rotasFamily(rota.id))
   const [load, setLoad] = useRecoilState(rotaToLoad(rota.id))
   const [rotasACarregar, setRotasACarregar] = useRecoilState(rotasToLoad)
+  const refresh = useRecoilRefresher_UNSTABLE(marcadorVisibilitySelector);
+
+
+  const loadPedidosTransaction = useRecoilTransaction_UNSTABLE(({get, set}) => (pedidos:any) => {
+
+    let pedidosWithProps = pedidos.map((pedido:any) => {
+      pedido.visible = true
+      pedido.solo = false
+      pedido.atualizado = 0
+
+      set(pedidosFamily(pedido.id), pedido)
+
+      const marcadorId = makeKey(pedido)
+      let marcadores = get(marcadoresState)
+      let marcador = get(marcadoresFamily(marcadorId)) as any
+
+      // valor default
+      let novoMarcador = {
+        id: marcadorId,
+        pedidos: [pedido.id],
+        latitude: pedido.latitude,
+        longitude: pedido.longitude,
+        atualizado: 0
+      }
+
+      if (marcador.pedidos !== undefined) {
+        // atualiza marcador existente
+        if (marcador.pedidos.indexOf(pedido.id) < 0) {
+          novoMarcador = {
+            id: marcadorId,
+            pedidos: [...marcador.pedidos, pedido.id],
+            latitude: marcador.latitude,
+            longitude: marcador.longitude,
+            atualizado: marcador.atualizado++
+          }
+        }
+      } else {
+        // marcador novo, adiciona a lista
+        const newlist = [...marcadores, marcadorId]
+        set(marcadoresState, newlist as never[])
+      }
+
+      set(marcadoresFamily(marcadorId), novoMarcador)
+
+      return pedido
+    })
+
+
+    setPedidosRota(pedidosWithProps)
+
+  })
+
+  const setVisibiltyTransaction = useRecoilTransaction_UNSTABLE(({get, set, reset}) => (pedidos:any) => {
+
+    let updatedPedidosRota = [] as never[]
+
+    pedidos.map((pp: any) => {
+      const p = get(pedidosFamily(pp.id))
+      let pedido = {...p} as any
+      pedido.visible = !pedido.visible
+      pedido.atualizado++
+      set(pedidosFamily(pp.id), {...pedido})
+      updatedPedidosRota.push({...pedido} as never)
+
+      // UPDATE RELATED MARKER
+      const key = makeKey(pedido)
+      const marcador = get(marcadoresFamily(key))
+      let updated = {...marcador} as any
+      updated.atualizado++
+      set(marcadoresFamily(key), {...updated})
+
+    })
+
+    setPedidosRota([...updatedPedidosRota])
+
+  });
 
   useEffect(() => {
     setRotaFamily(rota)
   }, [rota])
-
 
   const handleChange = () => {
     setLoad(false)
@@ -42,7 +122,7 @@ export const Rota = ({rota}: RotaProps) => {
 
     loadRota(rota.id, (response:any) => {
       console.log(`Pedidos carregados: ${response.data.data.length} na rota #${rota.id} - ${rota.nome}`)
-      setPedidosRota(response.data.data)
+      loadPedidosTransaction(response.data.data)
       setLoading(false)
       if (rotasACarregar.length) {
         const newList = [] as never[]
@@ -76,7 +156,13 @@ export const Rota = ({rota}: RotaProps) => {
           <span style={{fontSize: "20px"}}>
               <CheckIcon iconClass="mdi mdi-bullseye-arrow ml-5" checked={false}></CheckIcon>
               <CheckIcon iconClass="mdi mdi-alpha-s-circle-outline ml-5" checked={false}></CheckIcon>
-              <CheckIcon iconClass="mdi mdi-eye-off-outline ml-5" checked={false}></CheckIcon>
+              <CheckIcon iconClass="mdi mdi-eye-off-outline ml-5"
+                         checked={false}
+                         onChangeCallback={(checked:boolean) => {
+                           setVisibiltyTransaction(pedidosRota)
+                           refresh()
+                         }}
+              ></CheckIcon>
               <CheckIcon iconClass="mdi mdi-chevron-right ml-5 accordion-close"
                          checked={false}
                          checkedColor="white"

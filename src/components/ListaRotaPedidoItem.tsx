@@ -1,7 +1,6 @@
-import React, {useEffect} from 'react'
-import {useSetRecoilState} from "recoil";
+import React from 'react'
+import {useRecoilValue} from "recoil";
 import {pedidosFamily} from "../atoms/Pedidos";
-import {marcadoresSelector} from "../atoms/Marcadores";
 
 interface Interface {
   pedido: any,
@@ -9,25 +8,23 @@ interface Interface {
 }
 
 export const ListaRotaPedidoItem = ({pedido, isDragging}: Interface) => {
-  const setPedido = useSetRecoilState(pedidosFamily(pedido.id))
-  const setMarcadoresSelector = useSetRecoilState(marcadoresSelector)
 
-  useEffect(() => {
-    setPedido(pedido)
-    setMarcadoresSelector(pedido)
-  },[pedido])
+  const pedidoFam = useRecoilValue(pedidosFamily(pedido.id)) as any
 
-  return <div className="card-pedido" key={"cardPedido" + pedido.id}>
+  return <div className="card-pedido" key={"cardPedido" + pedidoFam.id}>
     <div className="card-pedido-sequencia">
-      {pedido.rota_sequencia}
+      {pedidoFam.rota_sequencia}
     </div>
     <div className="card-pedido-conteudo">
       <div className="card-pedido-title">
-        <a href="#">#{pedido.id} - {pedido.cliente.nome}</a>
+        <a href="#">#{pedidoFam.id} - {pedidoFam.cliente.nome}</a>
       </div>
       <div className={"card-pedido-detalhes" + (isDragging ? ' ' : ' ')}>
-        {pedido.endereco}, {pedido.numero}, {pedido.complemento}<br/>
-        {pedido.bairro} / {pedido.cidade} / {pedido.estado}<br/>
+        {pedidoFam.endereco}, {pedidoFam.numero}, {pedidoFam.complemento}<br/>
+        {pedidoFam.bairro} / {pedidoFam.cidade} / {pedidoFam.estado}<br/>
+      </div>
+      <div>
+        {pedidoFam.visible ? 'VISIVEL' : 'ESCONDIDO'} v{pedidoFam.atualizado}
       </div>
     </div>
   </div>
