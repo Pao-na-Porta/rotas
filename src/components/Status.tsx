@@ -9,6 +9,7 @@ export const Status = () => {
   let rotaId = 0
   let pedidosToUnloadId = 0
   let a = <div></div>
+  let b = <div></div>
   const toLoad = useRecoilValue(rotasToLoad)
   const rotasTotal = useRecoilValue(rotasState)
   const pedidosUnload = useRecoilValue(pedidosUnloadState) as any
@@ -22,9 +23,12 @@ export const Status = () => {
     a = <StatusDescarregarPedido id={pedidosToUnloadId} restantes={pedidosUnload.length - 1}/>
   }
 
+  if(toLoad.length) {
+    b = <StatusRotaCarregar total={rotasTotal.length} id={rotaId} restantes={toLoad.length}/>
+  }
   return <div className="status-bar">
-    <StatusRotaCarregar total={rotasTotal.length} id={rotaId} restantes={toLoad.length}/>
     {a}
+    {b}
   </div>
 
 }

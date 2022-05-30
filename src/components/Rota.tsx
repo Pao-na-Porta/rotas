@@ -12,8 +12,13 @@ import {
 import {ListaRotaPedidos} from "./ListaRotaPedidos"
 import {rotasFamily, rotaToLoad, rotasToLoad} from "../atoms/Rotas"
 import {loadRota} from "../helpers/Requests"
-import {pedidosFamily, pedidosUnloadState, pedidosVisibilitySelector} from "../atoms/Pedidos"
-import {makeKey, marcadoresFamily, marcadorVisibilitySelector, marcadoresState} from "../atoms/Marcadores"
+import {pedidosFamily, pedidosUnloadState, pedidosSolo} from "../atoms/Pedidos"
+import {
+  makeKey,
+  marcadoresFamily,
+  marcadorVisibilitySelector,
+  marcadoresState
+} from "../atoms/Marcadores"
 
 interface RotaProps {
   rota: any
@@ -28,17 +33,14 @@ export const Rota = ({rota}: RotaProps) => {
   const setRotaFamily = useSetRecoilState(rotasFamily(rota.id))
   const [load, setLoad] = useRecoilState(rotaToLoad(rota.id))
   const [rotasACarregar, setRotasACarregar] = useRecoilState(rotasToLoad)
-  const refresh = useRecoilRefresher_UNSTABLE(marcadorVisibilitySelector);
-
+  const refresh = useRecoilRefresher_UNSTABLE(marcadorVisibilitySelector)
 
   const loadPedidosTransaction = useRecoilTransaction_UNSTABLE(({get, set}) => (pedidos:any) => {
 
     let pedidosWithProps = pedidos.map((pedido:any) => {
       pedido.visible = true
-      pedido.solo = false
       pedido.atualizado = 0
-
-      set(pedidosFamily(pedido.id), pedido)
+      set(pedidosFamily(pedido.id), {...pedido})
 
       const marcadorId = makeKey(pedido)
       let marcadores = get(marcadoresState)
@@ -50,7 +52,8 @@ export const Rota = ({rota}: RotaProps) => {
         pedidos: [pedido.id],
         latitude: pedido.latitude,
         longitude: pedido.longitude,
-        atualizado: 0
+        atualizado: 0,
+        visible: true
       }
 
       if (marcador.pedidos !== undefined) {
@@ -61,7 +64,8 @@ export const Rota = ({rota}: RotaProps) => {
             pedidos: [...marcador.pedidos, pedido.id],
             latitude: marcador.latitude,
             longitude: marcador.longitude,
-            atualizado: marcador.atualizado++
+            atualizado: marcador.atualizado++,
+            visible: true
           }
         }
       } else {
@@ -80,11 +84,45 @@ export const Rota = ({rota}: RotaProps) => {
 
   })
 
+  const unsetSoloTransaction = useRecoilTransaction_UNSTABLE(({get, set}) => (pedidos:any) => {
+    const listaSolo = get(pedidosSolo) as any[]
+    let updated = listaSolo.filter((value) => {
+      return pedidos.find((pedido: any) => {
+        return pedido.id === value
+      }) === undefined
+    })
+    set(pedidosSolo, updated as never[])
+
+    get(marcadoresState).forEach((id: any) => {
+      const m = get(marcadoresFamily(id)) as any
+      set(marcadoresFamily(m.id), {...m, atualizado: m.atualizado+1})
+    })
+
+  })
+
+  const setSoloTransaction = useRecoilTransaction_UNSTABLE(({get, set}) => (pedidos:any) => {
+    const listaSolo = get(pedidosSolo) as any[]
+    let updated = [...listaSolo]
+
+    pedidos.forEach((pp: any) => {
+      if (updated.indexOf(pp) < 0) {
+        updated = [...updated, pp.id]
+      }
+    })
+    set(pedidosSolo, [...updated] as never[])
+
+    get(marcadoresState).forEach((id: any) => {
+      const m = get(marcadoresFamily(id)) as any
+      set(marcadoresFamily(m.id), {...m, atualizado: m.atualizado+1})
+    })
+
+  })
+
   const setVisibiltyTransaction = useRecoilTransaction_UNSTABLE(({get, set, reset}) => (pedidos:any) => {
 
     let updatedPedidosRota = [] as never[]
 
-    pedidos.map((pp: any) => {
+    pedidos.forEach((pp: any) => {
       const p = get(pedidosFamily(pp.id))
       let pedido = {...p} as any
       pedido.visible = !pedido.visible
@@ -124,6 +162,8 @@ export const Rota = ({rota}: RotaProps) => {
       console.log(`Pedidos carregados: ${response.data.data.length} na rota #${rota.id} - ${rota.nome}`)
       loadPedidosTransaction(response.data.data)
       setLoading(false)
+
+      // se está usando a fila... remove item atual
       if (rotasACarregar.length) {
         const newList = [] as never[]
         for (let i=1; i<rotasACarregar.length; i++) {
@@ -155,7 +195,17 @@ export const Rota = ({rota}: RotaProps) => {
           <small>{rota.saida}</small>
           <span style={{fontSize: "20px"}}>
               <CheckIcon iconClass="mdi mdi-bullseye-arrow ml-5" checked={false}></CheckIcon>
-              <CheckIcon iconClass="mdi mdi-alpha-s-circle-outline ml-5" checked={false}></CheckIcon>
+              <CheckIcon iconClass="mdi mdi-alpha-s-circle-outline ml-5"
+                         checked={false}
+                         onChangeCallback={(checked:boolean) => {
+                           if (checked) {
+                             setSoloTransaction(pedidosRota)
+                           } else {
+                             unsetSoloTransaction(pedidosRota)
+                           }
+                           refresh()
+                         }}
+              ></CheckIcon>
               <CheckIcon iconClass="mdi mdi-eye-off-outline ml-5"
                          checked={false}
                          onChangeCallback={(checked:boolean) => {

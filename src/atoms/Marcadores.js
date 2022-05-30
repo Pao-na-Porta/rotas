@@ -1,5 +1,5 @@
 import {atom, atomFamily, selector} from 'recoil'
-import {pedidosFamily} from "./Pedidos";
+import {pedidosFamily, pedidosSolo} from "./Pedidos";
 
 export const makeKey = (pedido) => {
   return `pos-${pedido.latitude.toFixed(4)}${pedido.longitude.toFixed(4)}`
@@ -66,13 +66,21 @@ export const marcadoresSelector = selector({
 
 export const marcadorVisibilitySelector = selector ({
   key: 'marcadorVisibilitySelector',
-
   get: ({get}) => (marcador) => {
 
+    const listaSolo = get(pedidosSolo)
+    const isSoloOn = (listaSolo.length > 0)
     let visibility = false
+
     visibility = marcador.pedidos.reduce((prevValue, id) => {
-      const prop = get(pedidosFamily(id)).visible
-      return (typeof prop === "boolean" ? prop : true) || prevValue
+
+      let isVisible = get(pedidosFamily(id)).visible
+      isVisible = (isVisible === undefined) ? true : isVisible
+      const isSolo = (listaSolo.length > 0 && listaSolo.indexOf(id) >= 0)
+      const show = (isSoloOn && isSolo) || (!isSoloOn && isVisible)
+
+      return show || prevValue
+
     }, false)
 
     return visibility
