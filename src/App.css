@@ -147,21 +147,50 @@ h1 {
   color: white;
   font-weight: bold;
   font-size: 16px;
-  border-bottom: solid 1px white;
-  margin-bottom: 5px;
+  border-bottom: solid 1px #2b2b2b;
   transition: all .35s;
 }
 
-/*.accordion-tab::before {*/
-/*  content: "\001C1";*/
-/*  color: white;*/
-/*  vertical-align: center;*/
-/*  text-shadow: 0px 0px 1px #FFFFFF;*/
-/*  position: relative;*/
-/*  top: -25px;*/
-/*  left: -15px;*/
-/*  transform: rotate(90deg);*/
-/*}*/
+.accordion-rota-title {
+  padding: 2px;
+  border-radius: 3px;
+  margin-bottom: 5px;
+}
+
+.dia-semana-0 {
+  background-color: #63d471;
+  background-image: linear-gradient(315deg, #63d471 0%, #233329 74%);
+
+}
+
+.dia-semana-1 {
+  background-color: #485461;
+  background-image: linear-gradient(315deg, #485461 0%, #28313b 74%);
+}
+
+.dia-semana-2 {
+  background-color: #000000;
+  background-image: linear-gradient(315deg, #000000 0%, #414141 74%);
+}
+
+ .dia-semana-3 {
+   background-color: #923cb5;
+   background-image: linear-gradient(147deg, #923cb5 0%, #000000 74%);
+}
+
+.dia-semana-4 {
+  background-color: #a55c1b;
+  background-image: linear-gradient(315deg, #000000 0%, #a55c1b 74%);}
+
+.dia-semana-5 {
+  background-color: #000000;
+  background-image: linear-gradient(315deg, #000000 0%, #b82e1f 74%);
+}
+
+.dia-semana-6 {
+  background-color: #ffa69e;
+  background-image: linear-gradient(315deg, #ffa69e 0%, #5d4954 74%);
+}
 
 .mdi {
   text-shadow: 1px 1px 1px #646464
@@ -211,7 +240,7 @@ h1 {
 .accordion-content-opened {
   display: block;
   height: auto;
-  padding: 0 1em;
+  padding: 5px;
   padding-bottom: 10px;
   transition: all .35s;
 }
@@ -677,14 +706,6 @@ div.tab-content {
   border-bottom-right-radius: 6px;
 }
 
-.topcoat-button-bar__item:first-child > .topcoat-button-bar__button {
-  border-right: none;
-}
-
-.topcoat-button-bar__item:last-child > .topcoat-button-bar__button {
-  border-left: none;
-}
-
 .button,
 .topcoat-button-bar__button {
   position: relative;
@@ -709,7 +730,8 @@ div.tab-content {
 .topcoat-button-bar__button {
   width: 100%;
   padding: 0 1.25rem;
-  border: 1px solid #a5a8a8;
+  border: solid 1px #a5a8a8;
+  border-right: none;
   /* Important inheritance to manipulate border radius from parent */
   border-radius: inherit;
   background-color: #e5e9e8;
@@ -718,6 +740,19 @@ div.tab-content {
   color: #454545;
   text-shadow: 0 1px #fff;
   line-height: 1.5rem;
+}
+
+.topcoat-button-bar__item:first-child > .topcoat-button-bar__button {
+  border-right: none;
+}
+
+.topcoat-button-bar__item:last-child > .topcoat-button-bar__button {
+  border-right: 1px;
+}
+
+.topcoat-active {
+  color: white;
+  background-color: #2b2b2b;
 }
 
 :checked + .topcoat-button-bar__button,
@@ -736,9 +771,10 @@ div.tab-content {
 }
 
 .topcoat-button-bar__button:focus {
-  border: 1px solid #0940fd;
-  -webkit-box-shadow: 0 0 0 2px #6fb5f1;
-  box-shadow: 0 0 0 2px #6fb5f1;
+
+  /*border: 1px solid #0940fd;*/
+  /*-webkit-box-shadow: 0 0 0 2px #6fb5f1;*/
+  /*box-shadow: 0 0 0 2px #6fb5f1;*/
   z-index: 1;
 }
 

@@ -19,6 +19,7 @@ import {
   marcadorVisibilitySelector,
   marcadoresState
 } from "../atoms/Marcadores"
+import {DataMysql2Date, DiaSemana} from "../helpers/Formatos";
 
 interface RotaProps {
   rota: any
@@ -145,7 +146,7 @@ export const Rota = ({rota}: RotaProps) => {
 
   useEffect(() => {
     setRotaFamily(rota)
-  }, [rota])
+  }, [rota, setRotaFamily])
 
   const handleChange = () => {
     setLoad(false)
@@ -189,7 +190,7 @@ export const Rota = ({rota}: RotaProps) => {
         id={rota.id}
         onChange={handleChange}></RotaIcon>
       <div style={{width: "100%"}}>
-        <div className="mb-5">{rota.nome}</div>
+        <div className={"accordion-rota-title dia-semana-" + DataMysql2Date(rota.entrega_at).getDay()}>{rota.nome} / {rota.entrega_at === null ? '' : DiaSemana(rota.entrega_at)}</div>
         <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
           <small>{rota.pedidos_count} pedido{rota.pedidos_count === 1 ? '' : 's'}</small>
           <small>{rota.saida}</small>

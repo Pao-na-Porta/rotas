@@ -1,9 +1,9 @@
 import React from "react"
-import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
+import {useRecoilValue, useSetRecoilState} from "recoil";
 import {rotasState, rotasToLoad} from "../atoms/Rotas"
 
 export const ButtonBar = () => {
-  const [toLoad, setToLoad] = useRecoilState(rotasToLoad)
+  const setToLoad = useSetRecoilState(rotasToLoad)
   const rotasDisponiveis = useRecoilValue(rotasState)
 
 
