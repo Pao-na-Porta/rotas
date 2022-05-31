@@ -5,7 +5,7 @@ import {DivIcon} from "leaflet"
 import {Marker, Popup} from "react-leaflet"
 import {MarkerPopup} from "./MarkerPopup"
 import {rotasFamily} from "../atoms/Rotas"
-import {marcadoresFamily, marcadorVisibilitySelector} from "../atoms/Marcadores"
+import {marcadoresFamily, marcadorVisibilitySelector, marcadorPedidosMesmaRota} from "../atoms/Marcadores"
 
 const getCustomIcon = (marcador:any, color: string, pedido: any) => {
 
@@ -144,6 +144,7 @@ export const MarkerCustom = ({marcadorId}:Interface) => {
   const marcador = useRecoilValue(marcadoresFamily(marcadorId)) as any
   const primeiroPedido = useRecoilValue(pedidosFamily(marcador.pedidos[0])) as any
   let rota = useRecoilValue(rotasFamily(primeiroPedido.rota_id)) as any
+  const getMesmaRota = useRecoilValue(marcadorPedidosMesmaRota) as any
   let visible = true
   let getVisibility = useRecoilValue(marcadorVisibilitySelector)
 
@@ -152,15 +153,30 @@ export const MarkerCustom = ({marcadorId}:Interface) => {
     setOpacidade(visible ? 1 : 0)
   }, [marcador])
 
+  let html = getCustomIcon(marcador, rota.cor.background, primeiroPedido)
+
+  if (marcador.pedidos.length > 1) {
+    if (getMesmaRota(marcador)) {
+      html = '<i class="mdi mdi-layers-triple-outline marker-custom-icon"></i>' + html
+    } else {
+      html = '<i class="mdi  mdi-heart-broken marker-custom-icon"></i>' + html
+    }
+  }
   let marker = new DivIcon({
-    html: getCustomIcon(marcador, rota.cor.background, primeiroPedido),
+    html: html,
     className: `marker-custom-transparent`,
     iconSize: [50, 50]
   });
 
-  return <Marker key={'MarkerCustomMarker' + primeiroPedido.id} position={[parseFloat(marcador.latitude), parseFloat(marcador.longitude)]} icon={marker} opacity={opacidade}>
+  return <Marker key={'MarkerCustomMarker' + primeiroPedido.id}
+                 position={[parseFloat(marcador.latitude), parseFloat(marcador.longitude)]}
+                 icon={marker}
+                 opacity={opacidade}>
     <Popup key={'MarkerPopupOnMarkerPopup' + marcador.id + primeiroPedido.id}>
-      <MarkerPopup marcador={marcador} key={'MarkerPopupOnMarker' + marcador.id + primeiroPedido.id}/>
+      <MarkerPopup
+        marcador={marcador}
+        key={'MarkerPopupOnMarker' + marcador.id + primeiroPedido.id}
+      />
     </Popup>
   </Marker>
 

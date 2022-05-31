@@ -20,7 +20,7 @@ interface InterfaceIcon {
   classes: string
 }
 
-export const ButtonBar = ({key, children}: Interface) => {
+export const ButtonBar = ({key, children}:  Interface) => {
 
   return <div className="ml-5 mb-3 w-100" key={key}>
     <div className="topcoat-button-bar w-100">

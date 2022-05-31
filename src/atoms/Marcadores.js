@@ -1,10 +1,11 @@
 import {atom, atomFamily, selector} from 'recoil'
 import {pedidosFamily, pedidosSolo} from "./Pedidos";
+import {showOnlyMultipleMarker} from "./GlobalAtoms";
 
 export const makeKey = (pedido) => {
   return `pos-${pedido.latitude.toFixed(4)}${pedido.longitude.toFixed(4)}`
-      .replace('.', '-')
-      .replace('.', '-')
+    .replace('.', '-')
+    .replace('.', '-')
 }
 
 export const marcadoresState = atom({
@@ -19,7 +20,7 @@ export const marcadoresFamily = atomFamily({
 
 export const marcadoresSelector = selector({
   key: 'marcadoresSelector',
-  get: (pedido) =>  ({get}) => {
+  get: (pedido) => ({get}) => {
     const marcadorId = makeKey(pedido)
     return get(marcadoresFamily(marcadorId))
   },
@@ -63,14 +64,31 @@ export const marcadoresSelector = selector({
   }
 })
 
+export const marcadorUpdateAll = selector({
+  key: 'marcadorUpdateAll',
+  get: ({get}) => {
 
-export const marcadorVisibilitySelector = selector ({
+  },
+  set: ({get, set}, value) => {
+    get(marcadoresState).forEach((id) => {
+      const m = get(marcadoresFamily(id))
+      set(marcadoresFamily(m.id), {...m, atualizado: m.atualizado + 1})
+    })
+  }
+})
+
+export const marcadorVisibilitySelector = selector({
   key: 'marcadorVisibilitySelector',
   get: ({get}) => (marcador) => {
 
+    const onlyMultiple = get(showOnlyMultipleMarker)
     const listaSolo = get(pedidosSolo)
     const isSoloOn = (listaSolo.length > 0)
     let visibility = false
+
+    if (onlyMultiple && marcador.pedidos.length < 2) {
+      return false
+    }
 
     visibility = marcador.pedidos.reduce((prevValue, id) => {
 
@@ -86,5 +104,21 @@ export const marcadorVisibilitySelector = selector ({
     return visibility
   },
   cachePolicy_UNSTABLE: {eviction: 'most-recent'}
+})
 
+export const marcadorPedidosMesmaRota = selector({
+  key: 'marcadorPedidosMesmaRota',
+  get: ({get}) => (marcador) => {
+    let ultimaRota = 0
+    let mesmaRota = true
+    marcador.pedidos.map((id) => {
+      let pedido = get(pedidosFamily(id))
+      if (ultimaRota !== 0) {
+        mesmaRota = mesmaRota && (ultimaRota === pedido.rota_id)
+      }
+      ultimaRota = pedido.rota_id
+    })
+
+    return mesmaRota
+  }
 })

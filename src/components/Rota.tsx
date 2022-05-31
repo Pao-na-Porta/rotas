@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react"
-import CheckIcon from "./CheckIcon"
+import CheckIcon from "./ui/CheckIcon"
 import RotaIcon from "./RotaIcon"
 import {SelectEntregador} from "./SelectEntregador"
 import {SelectSuporte} from "./SelectSuporte"
@@ -39,9 +39,10 @@ export const Rota = ({rota}: RotaProps) => {
   const loadPedidosTransaction = useRecoilTransaction_UNSTABLE(({get, set}) => (pedidos:any) => {
 
     let pedidosWithProps = pedidos.map((pedido:any) => {
-      pedido.visible = true
-      pedido.atualizado = 0
-      set(pedidosFamily(pedido.id), {...pedido})
+      let copy = {...pedido}
+      copy.visible = true
+      copy.atualizado = 0
+      set(pedidosFamily(pedido.id), {...copy})
 
       const marcadorId = makeKey(pedido)
       let marcadores = get(marcadoresState)
@@ -65,7 +66,7 @@ export const Rota = ({rota}: RotaProps) => {
             pedidos: [...marcador.pedidos, pedido.id],
             latitude: marcador.latitude,
             longitude: marcador.longitude,
-            atualizado: marcador.atualizado++,
+            atualizado: marcador.atualizado + 1,
             visible: true
           }
         }
