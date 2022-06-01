@@ -245,6 +245,16 @@ h1 {
   transition: all .35s;
 }
 
+.row {
+  display: flex;
+  justify-content: space-between;
+}
+.col-1 {width: 50%}
+.col-2 {width: 50%}
+.col-3 {width: 33%}
+.col-4 {width: 25%}
+.col-5 {width: 20%}
+.col-6 {width: 16.67%}
 /** FORMS **/
 .form {
   display: table
@@ -645,10 +655,31 @@ div.tab-content {
   background-color: #ffffffb5;
 }
 
+.custom-marker-sequencia  {
+  display: block;
+  border: 2px white solid;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: #ff3d3d;
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 999;
+  top: -15px;
+  left: 12px;
+  position: absolute;
+}
+
+
 .leaflet-popup {
   bottom: 14px!important;
 }
 
+.leaflet-popup-content {
+  margin: 0 0 0 0!important;
+}
 
 /** CARD PEDDIO DD **/
 
@@ -798,4 +829,11 @@ div.tab-content {
 
 .topcoat-button-bar .mdi {
   text-shadow: none
+}
+
+.warning {
+  background-color: orange;
+  padding: 3px;
+  border-radius: 3px;
+  color: #2b2b2b;
 }

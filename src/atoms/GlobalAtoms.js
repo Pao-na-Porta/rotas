@@ -4,3 +4,8 @@ export const showOnlyMultipleMarker = atom({
   key: 'showOnlyMultipleMarker',
   default: false
 })
+
+export const showSequenciaEntrega = atom({
+  key: 'showSequenciaEntrega',
+  default: false
+})

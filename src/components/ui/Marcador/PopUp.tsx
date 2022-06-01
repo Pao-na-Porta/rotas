@@ -1,31 +1,31 @@
 import React, {useState} from 'react'
-import {MarkerPopupContent} from "./MarkerPopupContent";
-import {useRecoilValue} from "recoil";
-import {pedidosFamily} from "../atoms/Pedidos";
+import {PopupContent} from "./PopupContent"
+import {PopupTab} from "./PopupTab"
 
 interface MarkerPopupInterface {
   marcador: any
 }
 
-export const MarkerPopup = ({marcador}: MarkerPopupInterface) => {
+export const PopUp = ({marcador}: MarkerPopupInterface) => {
   const [pedidoSelecionado, setPedidoSelecionado] = useState(marcador.pedidos[0]);
+
+  const onClickHandler = (id:any) => {
+    setPedidoSelecionado(id)
+  }
 
   return <div className="popup" key={'markerPopup123' + marcador.id}>
     <ul className="popup-tab-header">
       {marcador.pedidos.map((id: any) => {
 
-        return <li key={`likey-${marcador.id}-${id}`}>
-          <a href="#"
-             className={(pedidoSelecionado === id ? 'ativo' : '')}
-             onClick={() => {
-               setPedidoSelecionado(id)
-             }}>{id}
-          </a>
-        </li>
+        return <PopupTab key={`likey-${marcador.id}-${id}`}
+                         id={id}
+                         marcador={marcador}
+                         pedidoSelecionado={pedidoSelecionado}
+                         onClickHandler={onClickHandler}/>
       })}
     </ul>
     {marcador.pedidos.map((id: any) => {
-      return <MarkerPopupContent
+      return <PopupContent
         key={'MarkerPopupContent' + id}
         marcadorId={marcador.id}
         pedidoId={id}
