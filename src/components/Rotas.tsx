@@ -9,7 +9,7 @@ import {dataDeEntregaState} from "../atoms/DataDeEntrega"
 export const Rotas = () => {
   const rotas = useRecoilValue(rotasState)
   const dataEntrega = useRecoilValue(dataDeEntregaState)
-  let elementoFiltrante:any = ''
+  let elementoFiltrante: any = ''
   let datasEntrega = dataEntrega.split(',')
   const [filtroDias, setFiltroDias] = useState([])
 
@@ -20,23 +20,30 @@ export const Rotas = () => {
     })
   }
 
+  const handleChange = (e: any) => {
+    if (e.checked) {
+      setFiltroDias([...filtroDias, e.value] as never[])
+    } else {
+      let updated = filtroDias.filter((value) => {
+        return value !== e.value
+      })
+      setFiltroDias(updated)
+    }
+  }
+
   if (dataEntrega !== '') {
     elementoFiltrante = <div className="tab-row">
       <ButtonBar xkey={'FiltroRotas'}>
         {datasEntrega.sort().map((data) => {
           return <ButtonBarButton
+            key={data}
             xkey={data}
-            label={DataMysql2Date(data).toLocaleString().substring(0,5) + ' ' + DiaSemana(data)}
+            label={DataMysql2Date(data).toLocaleString().substring(0, 5) + ' ' + DiaSemana(data)}
             value={data}
-            onChange={(e:any) => {
-              if (e.checked) {
-                setFiltroDias([...filtroDias, e.value] as never[])
-              } else {
-                let updated = filtroDias.filter((value) => { return value !== e.value})
-                setFiltroDias(updated)
-              }
-            }}
-            isCheckbox={true}/>
+            onChange={handleChange}
+            isCheckbox={true}
+            isChecked={filtroDias.indexOf(data as never) > -1}
+          />
         })}
       </ButtonBar>
     </div>
@@ -44,13 +51,13 @@ export const Rotas = () => {
 
   return <div>
     {elementoFiltrante}
-  <div className="scroll-bar">
-    <div className="tab-row m-5">
-      {rotasFiltradas().map((rota: any) => {
-        const key = `rotaComponent${rota.id}`
-        return <Rota rota={rota} key={key}/>
-      })}
+    <div className="scroll-bar">
+      <div className="tab-row m-5">
+        {rotasFiltradas().map((rota: any) => {
+          const key = `rotaComponent${rota.id}`
+          return <Rota rota={rota} key={key}/>
+        })}
+      </div>
     </div>
-  </div>
   </div>
 }
