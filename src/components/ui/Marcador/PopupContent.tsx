@@ -20,18 +20,18 @@ export const PopupContent = ({pedidoId, marcadorId, ativo}: MarkerPopupContentIn
     <div>
       <div className={'mb-3'}> <strong>{pedido.cliente.nome}</strong></div>
       <div className={'row mb-3'}>
-        <div className={'col'}> Pedido <strong style={{color: blue.A400}}>#{pedidoId}</strong><strong style={{color: red.A400}}>{pedido.excecao ? ' * EXCEÇÃO' : ''}</strong></div>
-        <div className={'col'}>Rota <strong>{pedido.rota.numero}</strong></div>
-        <div className={'col-2'}>Entrega <strong>#{pedido.rota_sequencia}</strong></div>
+        <div className={'col-3'}> Pedido <strong style={{color: blue.A400}}>#{pedidoId}</strong><strong style={{color: red.A400}}>{pedido.excecao ? ' * EXCEÇÃO' : ''}</strong></div>
+        <div className={'col-3'}>Rota <strong>{pedido.rota.numero}</strong></div>
+        <div className={'col-3'}>Entrega <strong>#{pedido.rota_sequencia}</strong></div>
       </div>
       <div className={"row"}>
-        <div className={"col-2"}>
+        <div className={"col-3"}>
           Vendedor: <strong>{pedido.vendedor.name}</strong>
         </div>
-        <div className={"col-2"}>
+        <div className={"col-3"}>
           Envio: <strong>{pedido.transportadora.nome} / {pedido.envio.nome}</strong>
         </div>
-        {pedido.observacao_entrega ? <div style={{color: orange.A400}}>{pedido.observacao_entrega}</div> : ''}
+        <div className={"col-3"}>{pedido.observacao_entrega ? <div style={{color: orange.A400}}>{pedido.observacao_entrega}</div> : ''}</div>
       </div>
       <div style={{color: red.A400}}>
       {pedido.entrega_de == null && pedido.entrega_ate == null ? '' : 'Restrição '}

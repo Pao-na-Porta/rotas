@@ -558,7 +558,7 @@ div.tab-content {
   position: relative;
   border-radius: 10px 30px 0 0;
   margin-left: -10px;
-  text-shadow: 1px 1px 0 #bbb;
+  /*text-shadow: 1px 1px 0 #bbb;*/
   box-shadow: 0px 0px 10px rgba(0,0,0,.5);
   transition: .2s;
 }
@@ -570,7 +570,7 @@ div.tab-content {
   height: 20px;
   padding: 6px 10px 20px 0;
   border-radius: 10px 30px 0 0;
-  background: #999;
+  background: #cbcbcb;
   color: #444;
   text-align: center;
   text-decoration: none;
@@ -658,15 +658,15 @@ div.tab-content {
 .custom-marker-sequencia  {
   display: block;
   border: 2px white solid;
-  width: 25px;
-  height: 25px;
+  min-width: 25px;
+  min-height: 25px;
   text-align: center;
-  border-radius: 50%;
+  border-radius: 5px;
   background-color: #ff3d3d;
   color: #fff;
   font-size: 14px;
   font-weight: bold;
-  z-index: 999;
+  z-index: 1000;
   top: -15px;
   left: 12px;
   position: absolute;

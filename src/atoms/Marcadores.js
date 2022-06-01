@@ -122,3 +122,13 @@ export const marcadorPedidosMesmaRota = selector({
     return mesmaRota
   }
 })
+
+export const marcadorPedidos = selector({
+  key: 'marcadorPedidos',
+  get: ({get}) => (marcador) => {
+    return marcador.pedidos.map((id) => {
+      return get(pedidosFamily(id))
+    })
+  }
+})
+

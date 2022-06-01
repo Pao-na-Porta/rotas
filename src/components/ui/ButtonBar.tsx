@@ -1,28 +1,29 @@
-import React, {useState} from "react"
+import React, {useEffect, useState} from "react"
 
-interface Interface {
+interface InterfaceButtonBar {
+  xkey: any,
   children: JSX.Element[],
-  key: any
 }
 
 interface InterfaceButton {
-  key: any,
+  xkey: any,
   onClick?: any,
   onChange?: any,
   isCheckbox?: boolean,
   isChecked?: boolean,
+  radioGroup?: string,
   label: string,
   icon?: string,
-  value?: any
+  value?: any,
 }
 
 interface InterfaceIcon {
   classes: string
 }
 
-export const ButtonBar = ({key, children}:  Interface) => {
+export const ButtonBar = ({xkey, children}:  InterfaceButtonBar) => {
 
-  return <div className="ml-5 mb-3 w-100" key={key}>
+  return <div className="ml-5 mb-3 w-100" key={xkey}>
     <div className="topcoat-button-bar w-100">
       {children.map((element) => {return element})}
     </div>
@@ -34,7 +35,7 @@ export const Icon  = ({classes}:InterfaceIcon) => {
   return <i className={classes}></i>
 }
 
-export const ButtonBarButton = ({key, onClick, onChange, isCheckbox, label, isChecked, icon, value}:InterfaceButton) => {
+export const ButtonBarButton = ({xkey, onClick, onChange, isCheckbox, label, isChecked, icon, value}:InterfaceButton) => {
 
   const [checked, setChecked] = useState(isChecked)
 
@@ -58,7 +59,10 @@ export const ButtonBarButton = ({key, onClick, onChange, isCheckbox, label, isCh
     iconElement =  <Icon classes={"mdi mdi-" + icon + " ml-5"}/>
   }
 
-  return <div className="topcoat-button-bar__item" key={key}>
+  useEffect(()=>{
+    setChecked(isChecked)
+  },[checked, isChecked])
+  return <div className="topcoat-button-bar__item" key={xkey}>
     <button className={"topcoat-button-bar__button" + (isCheckbox && checked ? " topcoat-active" : "")} onClick={handleClick}>
       {iconElement}{label}
     </button>

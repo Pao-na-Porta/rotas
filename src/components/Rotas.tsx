@@ -22,10 +22,10 @@ export const Rotas = () => {
 
   if (dataEntrega !== '') {
     elementoFiltrante = <div className="tab-row">
-      <ButtonBar key={'FiltroRotas'}>
+      <ButtonBar xkey={'FiltroRotas'}>
         {datasEntrega.sort().map((data) => {
           return <ButtonBarButton
-            key={data}
+            xkey={data}
             label={DataMysql2Date(data).toLocaleString().substring(0,5) + ' ' + DiaSemana(data)}
             value={data}
             onChange={(e:any) => {
