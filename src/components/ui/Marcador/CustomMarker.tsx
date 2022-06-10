@@ -1,11 +1,17 @@
 import React, {useEffect, useState} from 'react'
 import {pedidosFamily} from "../../../atoms/Pedidos"
-import {useRecoilValue} from "recoil"
+import {useRecoilTransaction_UNSTABLE, useRecoilValue} from "recoil"
 import {DivIcon} from "leaflet"
 import {Marker, Popup} from "react-leaflet"
 import {PopUp} from "./PopUp"
 import {rotasFamily} from "../../../atoms/Rotas"
-import {marcadoresFamily, marcadorVisibilitySelector, marcadorPedidosMesmaRota, marcadorPedidos} from "../../../atoms/Marcadores"
+import {
+  marcadoresFamily,
+  marcadorVisibilitySelector,
+  marcadorPedidosMesmaRota,
+  marcadorPedidos,
+  Marcador
+} from "../../../atoms/Marcadores"
 import {showNumeroPedido, showSequenciaEntrega, showTotalizadorHorta} from "../../../atoms/GlobalAtoms";
 import {CustomIcon} from "./CustomIcon";
 import {renderToStaticMarkup} from "react-dom/server";
@@ -26,60 +32,54 @@ export const CustomMarker = ({marcadorId}:Interface) => {
   const numeroPedidoVisiblity = useRecoilValue(showNumeroPedido)
   const hortaVisiblity = useRecoilValue(showTotalizadorHorta)
   const getPedidos = useRecoilValue(marcadorPedidos)
-  const pedidos = getPedidos(marcador)
+  const [badge, setBadge] = useState({visible: false, value: '', color: ''})
 
-  let badge = {visible: false, value: '', color: ''}
   let visible = true
   let getVisibility = useRecoilValue(marcadorVisibilitySelector)
+  let multipleClass = 'd-none'
+
   useEffect(() => {
     visible = getVisibility(marcador)
     setOpacidade(visible ? 1 : 0)
-  }, [marcador])
 
+    let pedidos = getPedidos(marcador)
 
-  let addOns = []
-  if (marcador.pedidos.length > 1) {
-    if (getMesmaRota(marcador)) {
-      addOns.push(<i className="mdi mdi-layers-triple-outline marker-custom-icon" key="1"></i>)
-    } else {
-      addOns.push(<i className="mdi mdi-heart-broken marker-custom-icon" key={2}></i>)
+    if (marcador.pedidos.length > 1) {
+      if (getMesmaRota(marcador)) {
+        multipleClass = 'mdi-layers-triple-outline'
+      } else {
+        multipleClass = 'mdi-heart-broken'
+      }
     }
-  }
 
-  if (sequenciaVisiblity) {
-    let sequencia = pedidos.map((pedido: any) => {
-      return pedido.rota_sequencia
-    })
-    badge.visible = true
-    badge.value = sequencia.join(', ')
-    badge.color = red.A700;
-  }
+    if (sequenciaVisiblity) {
+      let sequencia = pedidos.map((pedido: any) => {
+        return pedido.rota_sequencia
+      })
+      setBadge({visible: true, value: sequencia.join(', '), color: red.A700})
+    }
 
-  if (hortaVisiblity) {
-    let sequencia = pedidos.map((pedido: any) => {
-      return pedido.produtosHorta.reduce((prev:number, produto:any) => {return prev + produto.quantidade},  0)
-    })
+    if (sequenciaVisiblity) {
+      let sequencia = pedidos.map((pedido: any) => {
+        return pedido.rota_sequencia
+      })
+      setBadge({visible: true, value: sequencia.join(', '), color: red.A700})
+    }
 
-    let temHorta = sequencia.reduce((prev:number, qtd:number) => {return prev+qtd},0)
-    badge.visible = (temHorta > 0)
-    badge.value = sequencia.join(', ')
-    badge.color = green.A700;
-  }
+    if (hortaVisiblity) {
+      let sequencia = pedidos.map((pedido: any) => {
+        return pedido.produtosHorta.reduce((prev:number, produto:any) => {return prev + produto.quantidade},  0)
+      })
 
-  if (sequenciaVisiblity) {
-    let sequencia = pedidos.map((pedido: any) => {
-      return pedido.rota_sequencia
-    })
-    badge.visible = true
-    badge.value = sequencia.join(', ')
-    badge.color = red.A700;
-  }
+      let temHorta = sequencia.reduce((prev:number, qtd:number) => {return prev+qtd},0)
+      setBadge({visible: (temHorta > 0), value: sequencia.join(', '), color: green.A700})
+    }
 
-  if (numeroPedidoVisiblity) {
-    badge.visible = true
-    badge.value = marcador.pedidos.join(', ')
-    badge.color = blue.A700
-  }
+    if (numeroPedidoVisiblity) {
+      setBadge({visible: true, value: marcador.pedidos.join(', '), color: blue.A700})
+    }
+
+  }, [marcador, numeroPedidoVisiblity, sequenciaVisiblity, hortaVisiblity])
 
   const divMarker = <div>
     <CustomIcon
@@ -93,7 +93,7 @@ export const CustomMarker = ({marcadorId}:Interface) => {
     >
       {badge.value}
     </span>
-    {addOns.map((e) => {return e})}
+    <i className={"mdi marker-custom-icon" + multipleClass} key="1"></i>
   </div>
 
   let marker = new DivIcon({
