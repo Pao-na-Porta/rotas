@@ -11,6 +11,12 @@ export const rotasFamily = atomFamily({
   }
 )
 
+export const pedidosRotaFamily = atomFamily({
+      key: 'pedidosRotaFamily',
+      default: []
+  }
+)
+
 export const rotaToLoad = atomFamily({
     key: 'rotaToLoad',
     default: false
