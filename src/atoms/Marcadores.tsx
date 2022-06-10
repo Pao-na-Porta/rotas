@@ -110,9 +110,12 @@ export const marcadorPedidosMesmaRota = selector({
 
 export const marcadorPedidos = selector({
   key: 'marcadorPedidos',
-  get: ({get}) => (marcador:marcadorInterface) => {
-    return marcador.pedidos.map((id) => {
-      return get(pedidosFamily(id))
+  get: ({get}) => (pedidos:number[]) => {
+    //console.log(JSON.stringify(pedidos))
+    return pedidos.map((id) => {
+      const pedido = get(pedidosFamily(id))
+      //console.log(JSON.stringify(pedido))
+      return pedido
     })
   },
   cachePolicy_UNSTABLE: {eviction: 'most-recent'}

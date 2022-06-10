@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {pedidosFamily} from "../../../atoms/Pedidos"
-import {useRecoilTransaction_UNSTABLE, useRecoilValue} from "recoil"
+import {useRecoilValue} from "recoil"
 import {DivIcon} from "leaflet"
 import {Marker, Popup} from "react-leaflet"
 import {PopUp} from "./PopUp"
@@ -10,12 +10,12 @@ import {
   marcadorVisibilitySelector,
   marcadorPedidosMesmaRota,
   marcadorPedidos,
-  Marcador
 } from "../../../atoms/Marcadores"
 import {showNumeroPedido, showSequenciaEntrega, showTotalizadorHorta} from "../../../atoms/GlobalAtoms";
 import {CustomIcon} from "./CustomIcon";
 import {renderToStaticMarkup} from "react-dom/server";
 import {blue, green, red} from 'material-ui/colors'
+import {Badge} from "./Badge";
 
 interface Interface {
   marcadorId: any
@@ -42,7 +42,7 @@ export const CustomMarker = ({marcadorId}:Interface) => {
     visible = getVisibility(marcador)
     setOpacidade(visible ? 1 : 0)
 
-    let pedidos = getPedidos(marcador)
+    let pedidos = getPedidos(marcador.pedidos)
 
     if (marcador.pedidos.length > 1) {
       if (getMesmaRota(marcador)) {
@@ -88,11 +88,9 @@ export const CustomMarker = ({marcadorId}:Interface) => {
       color={rota.cor.background}
       pedido={primeiroPedido}
       classList={['']}/>
-    <span className="custom-marker-sequencia"
-          style={{display: (badge.visible ? 'block' : 'none'), backgroundColor: badge.color}}
-    >
-      {badge.value}
-    </span>
+    <Badge key="sequencia" visible={sequenciaVisiblity} color={red.A700} value={badge.value}></Badge>
+    <Badge key="horta" visible={hortaVisiblity} color={green.A700} value={badge.value}></Badge>
+    <Badge key="numeropedido" visible={numeroPedidoVisiblity} color={blue.A700} value={marcador.pedidos.join(', ')}></Badge>
     <i className={"mdi marker-custom-icon" + multipleClass} key="1"></i>
   </div>
 

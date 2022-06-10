@@ -8,8 +8,7 @@ export const pedidosFamily = atomFamily({
 
 export const pedidosSolo = atom({
   key: 'pedidosSoloFamily',
-  default: [],
-  cachePolicy_UNSTABLE: {eviction: 'most-recent'}
+  default: []
 })
 
 export const pedidosUnloadState = atom({
@@ -26,9 +25,9 @@ export const pedidosAtualizaSequencia = selector({
   get: ({get}) => {
 
   },
-  set: ({get, set}, pedidos) => {
+  set: ({get, set}, pedidos:any) => {
 
-    pedidos.forEach((pedido, index) => {
+    pedidos.forEach((pedido:any, index:number) => {
       let newPedido = {...pedido}
       newPedido.atualizado = pedido.atualizado + 1
       set(pedidosFamily(pedido.id), {...pedido, sequencia: index + 1})
