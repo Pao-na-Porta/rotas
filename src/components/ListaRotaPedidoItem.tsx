@@ -4,10 +4,9 @@ import {pedidosFamily} from "../atoms/Pedidos";
 
 interface Interface {
   pedido: any,
-  isDragging: boolean,
 }
 
-export const ListaRotaPedidoItem = ({pedido, isDragging}: Interface) => {
+export const ListaRotaPedidoItem = ({pedido}: Interface) => {
 
   const pedidoFam = useRecoilValue(pedidosFamily(pedido.id)) as any
 
@@ -19,7 +18,7 @@ export const ListaRotaPedidoItem = ({pedido, isDragging}: Interface) => {
       <div className="card-pedido-title">
         <a href="#">#{pedidoFam.id} - {pedidoFam.cliente.nome}</a>
       </div>
-      <div className={"card-pedido-detalhes" + (isDragging ? ' ' : ' ')}>
+      <div className={"card-pedido-detalhes"}>
         {pedidoFam.endereco}, {pedidoFam.numero}, {pedidoFam.complemento}<br/>
         {pedidoFam.bairro} / {pedidoFam.cidade} / {pedidoFam.estado}<br/>
       </div>

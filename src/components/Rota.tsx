@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from "react"
 import CheckIcon from "./ui/CheckIcon"
 import RotaIcon from "./RotaIcon"
-import {SelectEntregador} from "./SelectEntregador"
-import {SelectSuporte} from "./SelectSuporte"
 import {
   useRecoilRefresher_UNSTABLE,
   useRecoilState,
@@ -10,16 +8,17 @@ import {
   useSetRecoilState,
 } from "recoil"
 import {ListaRotaPedidos} from "./ListaRotaPedidos"
-import {rotasFamily, rotaToLoad, rotasToLoad} from "../atoms/Rotas"
+import {rotasFamily, pedidosRotaFamily, rotaToLoad, rotasToLoad} from "../atoms/Rotas"
 import {loadRota} from "../helpers/Requests"
 import {pedidosFamily, pedidosUnloadState, pedidosSolo} from "../atoms/Pedidos"
 import {
   makeKey,
   marcadoresFamily,
   marcadorVisibilitySelector,
-  marcadoresState
+  marcadoresState,
 } from "../atoms/Marcadores"
 import {DataMysql2Date, DiaSemana} from "../helpers/Formatos";
+import {RotaForm} from "./RotaForm";
 
 interface RotaProps {
   rota: any
@@ -27,62 +26,56 @@ interface RotaProps {
 
 export const Rota = ({rota}: RotaProps) => {
   const setPedidosUnload = useSetRecoilState(pedidosUnloadState)
-  const [pedidosRota, setPedidosRota] = useState([])
-  const [contentOpened, setContentOpened] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [tabVisible, setTabVisible] = useState(0)
   const setRotaFamily = useSetRecoilState(rotasFamily(rota.id))
   const [load, setLoad] = useRecoilState(rotaToLoad(rota.id))
   const [rotasACarregar, setRotasACarregar] = useRecoilState(rotasToLoad)
   const refresh = useRecoilRefresher_UNSTABLE(marcadorVisibilitySelector)
+  const [pedidosRota, setPedidosRota] = useRecoilState(pedidosRotaFamily(rota.id))
+  const [contentOpened, setContentOpened] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [tabVisible, setTabVisible] = useState(0)
 
   const loadPedidosTransaction = useRecoilTransaction_UNSTABLE(({get, set}) => (pedidos:any) => {
 
     let pedidosWithProps = pedidos.map((pedido:any) => {
+
       let copy = {...pedido}
       copy.visible = true
       copy.atualizado = 0
+      console.log(JSON.stringify(pedido.id + ' : ' + typeof pedido.id))
       set(pedidosFamily(pedido.id), {...copy})
 
       const marcadorId = makeKey(pedido)
       let marcadores = get(marcadoresState)
-      let marcador = get(marcadoresFamily(marcadorId)) as any
+      let marcador = {...get(marcadoresFamily(marcadorId))}
 
       // valor default
-      let novoMarcador = {
-        id: marcadorId,
-        pedidos: [pedido.id],
-        latitude: pedido.latitude,
-        longitude: pedido.longitude,
-        atualizado: 0,
-        visible: true
-      }
+      if (marcador.id != marcadorId) {
+        marcador.id = marcadorId
+        marcador.pedidos = [pedido.id]
+        marcador.latitude = pedido.latitude
+        marcador.longitude = pedido.longitude
+        marcador.atualizado = 1
+        marcador.visible = true
 
-      if (marcador.pedidos !== undefined) {
+        set(marcadoresState, [...marcadores, marcadorId] as never[])
+
+      } else {
         // atualiza marcador existente
         if (marcador.pedidos.indexOf(pedido.id) < 0) {
-          novoMarcador = {
-            id: marcadorId,
-            pedidos: [...marcador.pedidos, pedido.id],
-            latitude: marcador.latitude,
-            longitude: marcador.longitude,
-            atualizado: marcador.atualizado + 1,
-            visible: true
-          }
+          marcador.pedidos = [...marcador.pedidos, pedido.id]
+          marcador.atualizado = marcador.atualizado + 1
+          marcador.visible = true
         }
-      } else {
-        // marcador novo, adiciona a lista
-        const newlist = [...marcadores, marcadorId]
-        set(marcadoresState, newlist as never[])
       }
 
-      set(marcadoresFamily(marcadorId), novoMarcador)
+      set(marcadoresFamily(marcadorId), {...marcador})
 
       return pedido
+
     })
 
-
-    setPedidosRota(pedidosWithProps)
+    set(pedidosRotaFamily(rota.id), pedidosWithProps as never[])
 
   })
 
@@ -141,12 +134,13 @@ export const Rota = ({rota}: RotaProps) => {
 
     })
 
-    setPedidosRota([...updatedPedidosRota])
+    set(pedidosRotaFamily(rota.id), [...updatedPedidosRota])
 
   });
 
   useEffect(() => {
     setRotaFamily(rota)
+
   }, [rota, setRotaFamily])
 
   const handleChange = () => {
@@ -162,6 +156,8 @@ export const Rota = ({rota}: RotaProps) => {
 
     loadRota(rota.id, (response:any) => {
       console.log(`Pedidos carregados: ${response.data.data.length} na rota #${rota.id} - ${rota.nome}`)
+      // loadPedidosTransaction(response.data.data)
+
       loadPedidosTransaction(response.data.data)
       setLoading(false)
 
@@ -236,45 +232,7 @@ export const Rota = ({rota}: RotaProps) => {
       </div>
 
       <div className={"tab-squared-content " + (tabVisible === 0 ? 'active' : '')}>
-        <div className="form">
-          <div className="form-row">
-            <SelectEntregador label="Motorista" id={rota.motorista_id}/>
-            <SelectEntregador label="Entregador" id={rota.entregador_id} prependClass="mdi mdi-human-dolly"/>
-          </div>
-          <div className="form-row">
-            <div className="form-field">
-              <SelectSuporte label="Suporte" id={rota.suporte_id} prependClass="mdi-account-heart-outline"/>
-            </div>
-            <div className="form-field">
-              <label>Hora</label>
-              <div className="form-input-prep">
-                <span
-                  className="mdi mdi-clock-check-outline"></span>
-                <input type="text" value={rota.saida} onChange={(e) => {rota.saida = e.target.value}}/>
-              </div>
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-field">
-              <label>Carro</label>
-              <div className="form-input-prep">
-                <span
-                  className="mdi mdi-car"></span>
-                <input type="text" value={rota.carro} onChange={(e) => {rota.carro = e.target.value}}/>
-              </div>
-            </div>
-            <div className="form-field">
-              <label>Local</label>
-              <div className="form-input-prep">
-                <span
-                  className="mdi mdi-earth"></span>
-                <input type="text" value={rota.local} onChange={(e) => {rota.local = e.target.value}}/>
-              </div>
-            </div>
-          </div>
-
-        </div>
+        <RotaForm rota={rota}/>
       </div>
 
       <div className={"tab-squared-content " + (tabVisible === 3 ? 'active' : '')}>

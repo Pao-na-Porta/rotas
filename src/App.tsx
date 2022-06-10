@@ -1,13 +1,27 @@
 import React from 'react'
-import {RecoilRoot} from 'recoil';
+import {RecoilRoot, useRecoilCallback} from 'recoil';
 import {Loader} from "./components/Loader";
 import {MainWindow} from './components/MainWindow'
 import './App.css'
 
+const DebugButton = () => {
+  const onClick = useRecoilCallback(({snapshot}) => async () => {
+
+    console.debug('Atom values:');
+
+    for (const node of snapshot.getNodes_UNSTABLE() as any[]) {
+      const value = await snapshot.getPromise(node);
+      console.debug(node.key, value);
+    }
+  }, []);
+
+  return <button onClick={onClick}>Dump State</button>
+}
 function App() {
 
   return (
     <RecoilRoot>
+      <DebugButton/>
       <Loader/>
       <div className="App">
         <link rel="preconnect" href="https://fonts.googleapis.com"/>

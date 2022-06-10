@@ -1,6 +1,9 @@
 import React, {useEffect, useState} from 'react'
-import {ListaRotaPedidoItem} from "./ListaRotaPedidoItem";
-import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
+import {ListaRotaPedidoItem} from "./ListaRotaPedidoItem"
+import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd"
+import {pedidosAtualizaSequencia} from "../atoms/Pedidos"
+import {useRecoilRefresher_UNSTABLE, useSetRecoilState} from "recoil";
+import {marcadorVisibilitySelector} from "../atoms/Marcadores";
 
 interface Interface {
   pedidos: any[]
@@ -9,8 +12,7 @@ interface Interface {
 export const ListaRotaPedidos = ({pedidos}: Interface) => {
 
   const [itemList, setItemList] = useState(pedidos);
-  const [isDraggin, setIsDraggin] = useState(false);
-
+  const atualizaSequencia = useSetRecoilState(pedidosAtualizaSequencia)
 
   useEffect(() => { setItemList(pedidos)}, [pedidos] )
 
@@ -26,12 +28,8 @@ export const ListaRotaPedidos = ({pedidos}: Interface) => {
     // Remove dragged item
     let [reorderedItem] = updatedList.splice(droppedItem.source.index, 1);
 
-    // update sequencia
-    let updatedItem = {...reorderedItem}
-    updatedItem.rota_sequencia = droppedItem.destination.index + 1
-
     // Add dropped item
-    updatedList.splice(droppedItem.destination.index, 0, updatedItem);
+    updatedList.splice(droppedItem.destination.index, 0, reorderedItem);
 
     updatedList = updatedList.map((item, index) => {
       let newItem = {...item}
@@ -42,16 +40,13 @@ export const ListaRotaPedidos = ({pedidos}: Interface) => {
     // Update State
     setItemList(updatedList);
 
-    setIsDraggin(false)
+    atualizaSequencia(updatedList)
 
   };
 
-  const handleDragStart = (e:any) => {
-    setIsDraggin(true)
-  }
 
   return <div>
-    <DragDropContext onDragEnd={handleDrop} onBeforeDragStart={handleDragStart}>
+    <DragDropContext onDragEnd={handleDrop}>
       <Droppable droppableId="list-container" key={"list-container-key"}>
         {(provided) => (
           <div
@@ -71,7 +66,7 @@ export const ListaRotaPedidos = ({pedidos}: Interface) => {
                       {...provided.dragHandleProps}
                       {...provided.draggableProps}
                     >
-                      <ListaRotaPedidoItem pedido={pedido} isDragging={isDraggin} />
+                      <ListaRotaPedidoItem pedido={pedido} />
                     </div>
                   )}
                 </Draggable>
