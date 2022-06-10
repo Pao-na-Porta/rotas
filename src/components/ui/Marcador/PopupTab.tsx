@@ -4,13 +4,12 @@ import {pedidosFamily} from "../../../atoms/Pedidos";
 import {blue, orange, red} from "material-ui/colors"
 
 interface Interface {
-  key: any,
   id: number,
   marcador: any,
   pedidoSelecionado: number,
   onClickHandler: any
 }
-export const PopupTab = ({id, key, marcador, pedidoSelecionado, onClickHandler}:Interface) => {
+export const PopupTab = ({id, marcador, pedidoSelecionado, onClickHandler}:Interface) => {
 
   const pedido = useRecoilValue(pedidosFamily(id)) as any
 

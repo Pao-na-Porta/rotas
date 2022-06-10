@@ -17,7 +17,7 @@ export const Expandable = ({k, label, produtos}:Interface) => {
     <div onClick={() => {setOpen(!open)}}><strong style={{color: blue.A400}}>{label} ({qtdTotal})</strong></div>
     <div className={open ? '' : 'd-none'} >
       {produtos.map((produto) => {
-        return <div>{produto.quantidade} {produto.nome}</div>
+        return <div key={produto.nome.replace(' ', '-')}>{produto.quantidade} {produto.nome}</div>
       })}
     </div>
   </div>

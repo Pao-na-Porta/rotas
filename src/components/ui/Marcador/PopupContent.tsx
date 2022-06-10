@@ -49,13 +49,13 @@ export const PopupContent = ({pedidoId, marcadorId, ativo}: MarkerPopupContentIn
       <hr/>
       <div className={'row'}>
         <div className={'col-3'}>
-          <Expandable k={'e' + pedidoId} label={'Embalagem'} produtos={pedido.produtosEmbalagem}/>
+          <Expandable key={'ex' + pedidoId} k={'e' + pedidoId} label={'Embalagem'} produtos={pedido.produtosEmbalagem}/>
         </div>
         <div className={'col-3'}>
-          <Expandable k={'c' + pedidoId} label={'Cooler'} produtos={pedido.produtosCooler}/>
+          <Expandable key={'ce' + pedidoId} k={'c' + pedidoId} label={'Cooler'} produtos={pedido.produtosCooler}/>
         </div>
         <div className={'col-3'}>
-          <Expandable k={'h' + pedidoId} label={'Horta'} produtos={pedido.produtosHorta}/>
+          <Expandable key={'he' + pedidoId} k={'h' + pedidoId} label={'Horta'} produtos={pedido.produtosHorta}/>
         </div>
       </div>
     </div>
