@@ -42,7 +42,7 @@ export const Rota = ({rota}: RotaProps) => {
       let copy = {...pedido}
       copy.visible = true
       copy.atualizado = 0
-      console.log(JSON.stringify(pedido.id + ' : ' + typeof pedido.id))
+
       set(pedidosFamily(pedido.id), {...copy})
 
       const marcadorId = makeKey(pedido)
@@ -156,8 +156,6 @@ export const Rota = ({rota}: RotaProps) => {
 
     loadRota(rota.id, (response:any) => {
       console.log(`Pedidos carregados: ${response.data.data.length} na rota #${rota.id} - ${rota.nome}`)
-      // loadPedidosTransaction(response.data.data)
-
       loadPedidosTransaction(response.data.data)
       setLoading(false)
 
